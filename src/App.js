@@ -19,7 +19,7 @@ import { ethers, providers } from "ethers";
 import "./styles/App.css";
 import Layout from "./components/Layout";
 import MintNFTInput from "./components/MintNFTInput";
-import Status from "./components/Status";
+import StatusMessage from "./components/StatusMessage";
 import ImagePreview from "./components/ImagePreview";
 import Link from "./components/Link";
 import DisplayLinks from "./components/DisplayLinks";
@@ -43,7 +43,7 @@ const INITIAL_TRANSACTION_STATE = {
 const CHAIN_MAPPINGS = {
   rinkeby: {
     id: 42,
-    rpc: process.env.RINKEBY_RPC_URL,
+    rpc: process.env.REACT_APP_RINKEBY_RPC_URL,
     contractAddress: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
   },
   polygon_test: {
@@ -374,7 +374,7 @@ const App = () => {
  */
   const fetchNFTCollection = async () => {
     console.log("fetching nft collection");
-    const provider = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/b448324e12e4f4243acad791/eth/rinkeby");
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RINKEBY_RPC_URL);
     await provider.getBlockNumber().then((result) => {
       console.log("Current block number: " + result);
   });
@@ -408,7 +408,7 @@ const App = () => {
     <Layout connected={currentAccount === ""} connectWallet={connectWallet}>
       <>
         <p className="sub-sub-text">{`Remaining NFT's: ${remainingNFTs}`}</p>
-        {transactionState !== INITIAL_TRANSACTION_STATE && <Status transactionState={transactionState}/>}
+        {transactionState !== INITIAL_TRANSACTION_STATE && <StatusMessage transactionState={transactionState}/>}
         {imageView &&
           !linksObj.etherscan && <Link link={imageView} description="See IPFS image link"/>}
         {imageView && <ImagePreview imgLink ={imageView}/>}
