@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 /* ERC71 based Solidity Contract Interface */
-import filecoinNFTHack from "./utils/FilecoinNFTHack.json";
+//import filecoinNFTHack from "./utils/FilecoinNFTHack.json";
+import filgoodNFT1155 from "./utils/FilGoodNFT1155.json";
+import filgoodNFT721 from "./utils/FilGoodNFT721.json";
 
 /* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
 import { NFTStorage, File } from "nft.storage";
@@ -23,7 +25,7 @@ import Link from "./components/Link";
 import DisplayLinks from "./components/DisplayLinks";
 import ConnectWalletButton from "./components/ConnectWalletButton";
 import NFTViewer from "./components/NFTViewer";
-import SaveToNFTStorage from "./components/SaveToNFTStorage";
+//import SaveToNFTStorage from "./components/SaveToNFTStorage";
 
 const INITIAL_LINK_STATE = {
   etherscan: "",
@@ -38,7 +40,17 @@ const INITIAL_TRANSACTION_STATE = {
   warning: "",
 };
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+const CHAIN_MAPPINGS = {
+  rinkeby: {
+    id: 42,
+    rpc: process.env.RINKEBY_RPC_URL,
+    contractAddress: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+  },
+  polygon_test: {
+    id: 80001,
+    rpc: process.env.POLYGON_TEST_RPC_URL
+  }
+}
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -52,6 +64,8 @@ const App = () => {
     INITIAL_TRANSACTION_STATE
   );
   const { loading, error, success } = transactionState; //make it easier
+  const [contractChoice, setcontractChoice] = useState("ERC721");
+  const [chainChoice, setChainChoice] = useState("rinkeby");
 
   /* runs on page load - checks wallet is connected 
    Really want to run this on any changes to a wallet too
@@ -61,7 +75,7 @@ const App = () => {
     checkIfWalletIsConnected();
   }, []);
 
-  /* If a wallet is connected, do some setup */
+  /* If a wallet is connected, do some setup and continue listening for wallet changes */
   useEffect(() => {
     setUpEventListener();
     fetchNFTCollection();
@@ -71,6 +85,11 @@ const App = () => {
   useEffect(() => {
     createImageURLsForRetrieval(nftCollectionData);
   }, [nftCollectionData])
+
+  //way t
+  // useEffect(() => {
+
+  // }, [ethereum])
 
   /* Check for a wallet */
   const checkIfWalletIsConnected = async () => {
@@ -122,6 +141,10 @@ const App = () => {
     }
   };
 
+  const changeWalletChain = async () => {
+    //code here
+  }
+
   /* Listens for events emitted from the solidity contract, to render data accurately */
   const setUpEventListener = async () => {
     try {
@@ -131,19 +154,18 @@ const App = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          filecoinNFTHack.abi,
+          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+          filgoodNFT1155.abi,
           signer
         );
+        console.log("CONNECTED", connectedContract)
 
-        connectedContract.on("RemainingMintableNFTChange", (remainingNFTs) => {
-          setRemainingNFTs(remainingNFTs);
-        });
         connectedContract.on(
-          "NewFilecoinNFTMinted",
-          (sender, tokenId, tokenURI) => {
+          "NewFilGoodNFTMinted",
+          (sender, tokenId, tokenURI, remainingNFTs) => {
             console.log("event - new minted NFT");
             fetchNFTCollection();
+            setRemainingNFTs(remainingNFTs)
           }
         );
       } else {
@@ -188,6 +210,7 @@ const App = () => {
     const client = new NFTStorage({
       token: process.env.REACT_APP_NFT_STORAGE_API_KEY,
     });
+    console.log("got client", client)
 
     // The Advanced Encryption Standard (AES) is a U.S. Federal Information Processing Standard (FIPS). 
     // It was selected after a 5-year process where 15 competing designs were evaluated.
@@ -202,14 +225,14 @@ const App = () => {
     try {
       await client
         .store({
-          name: `${name}: Filecoin @ Phoenix Guild 2022`,
+          name: `${name}: FilGood NFT 2022`,
           description:
-            "NFT created for Phoenix Guild Workshop 2022 and limited to 100 personalised tokens",
+            "NFT created for FilGood Workshop 2022 and limited to 100 personalised tokens",
           image: new File(
             [
               CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)
             ],
-            `FilecoinPhoenix Guild.svg`,
+            `FilGoodNFT.svg`,
             {
               type: "image/svg+xml",
             }
@@ -266,8 +289,8 @@ const App = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          filecoinNFTHack.abi,
+          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+          filgoodNFT1155.abi,
           signer
         );
 
@@ -275,13 +298,13 @@ const App = () => {
         let nftTxn = await connectedContract.mintMyNFT(IPFSurl);
 
         connectedContract.on(
-          "NewFilecoinNFTMinted",
+          "NewFilGoodNFTMinted",
           (from, tokenId, tokenURI) => {
             console.log("event listener", from, tokenId.toNumber(), tokenURI);
             setLinksObj({
               ...linksObj,
-              opensea: `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
-              rarible: `https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}`,
+              opensea: `https://testnets.opensea.io/assets/${process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
+              rarible: `https://rinkeby.rarible.com/token/${process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS}:${tokenId.toNumber()}`,
               etherscan: `https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
             });
           }
@@ -352,13 +375,16 @@ const App = () => {
   const fetchNFTCollection = async () => {
     console.log("fetching nft collection");
     const provider = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/b448324e12e4f4243acad791/eth/rinkeby");
+    await provider.getBlockNumber().then((result) => {
+      console.log("Current block number: " + result);
+  });
     // provider is read-only get a signer for on-chain transactions
     // const signer = provider.getSigner();
     // const provider = new ethers.providers.Web3Provider(ethereum);
     // const signer = provider.getSigner();
     const connectedContract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      filecoinNFTHack.abi,
+      process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+      filgoodNFT1155.abi,
       provider
     );
 

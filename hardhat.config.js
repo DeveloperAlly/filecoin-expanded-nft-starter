@@ -58,7 +58,7 @@ module.exports = {
       accounts: [process.env.METAMASK_PRIVATE_KEY],
     },
     polygon_testnet: {
-      url: process.env.MUMBAI_RPC_URL,
+      url: process.env.POLYGON_TEST_RPC_URL,
       accounts: [process.env.METAMASK_PRIVATE_KEY],
     },
     bsc_testnet: {

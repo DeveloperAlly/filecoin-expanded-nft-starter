@@ -30,7 +30,7 @@ contract FilGoodNFT721 is ERC721URIStorage {
         "other data like version, strenth, etc....": ""
     }
     */
-    event NewFilecoinNFTMinted(
+    event NewFilGoodNFTMinted(
         address sender,
         uint256 tokenId,
         string tokenURI,
@@ -64,7 +64,7 @@ contract FilGoodNFT721 is ERC721URIStorage {
 
         nftCollection.push(newNFT);
 
-        emit NewFilecoinNFTMinted(
+        emit NewFilGoodNFTMinted(
             msg.sender,
             newItemId,
             ipfsURI,

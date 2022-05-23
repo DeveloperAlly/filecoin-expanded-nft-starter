@@ -76,6 +76,6 @@
 - npx hardhat run --network NETWORK scripts/deploy.js
 - NETWORK = localhost or any in the config
 
-7. Verify our deployed contract
+7. Verify our deployed contract (only for etherscan networks - ie rinkeby, goerli, eth mainnet)
 
 - npx hardhat verify --network NETWORK DEPLOYED_CONTRACT_ADDRESS "Constructor argument 1"
