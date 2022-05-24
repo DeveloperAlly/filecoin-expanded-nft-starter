@@ -1,6 +1,22 @@
+export const startSVG = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1024" height="512" viewBox="0 0 1024 512" xml:space="preserve">
+<desc>Created with Fabric.js 4.2.0</desc>
+<defs>
+</defs>`
+
+export const backgroundSVG = `<g transform="matrix(1 0 0 1 512 256)" id="8be63cbe-94b0-47c1-b84d-e9357a214c96"  >
+<rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(1,1,1); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  x="-512" y="-256" rx="0" ry="0" width="1024" height="512"></rect>
+</g>`
+
+export const nameSVG = `<g transform="matrix(1 0 0 1 512 455)" style="" id="fce36f3e-f6a7-49e9-b891-c6966fbdff09"  >
+<text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-99.84" y="25.13" >`
+
+export const nameEndSVG = `</tspan></text></g></svg>`
+
 export const baseSVG = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1200" height="900" color="black" viewBox="0 0 1200 900" xml:space="preserve">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1200" height="900" viewBox="0 0 1200 900" xml:space="preserve">
   <desc>
     Created with Fabric.js 4.2.0
   </desc>
@@ -88,7 +104,7 @@ export const baseSVG = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
     <polygon style="stroke:rgb(0,0,0);stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:rgb(251,249,133);fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" points="0,-35.47 11.56,-12.17 37.29,-8.4 18.68,9.8 23.06,35.47 0,23.42 -23.06,35.47 -18.74,9.8 -37.29,-8.4 -11.56,-12.17 "/>
   </g>
   <g transform="matrix(1 0 0 1 591.37 807.07)" style="" id="e5c9c252-448c-48c3-860a-508d74b67159">
-    <text xml:space="preserve" font-family="Raleway" font-size="69" font-style="normal" font-weight="700" style="stroke:none;stroke-width:1;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:rgb(255,255,255);fill-rule:nonzero;opacity:1;white-space:pre"><tspan x="-86.22" y="21.68">
+    <text xml:space="preserve" font-family="Raleway" font-size="69" font-style="normal" font-weight="700" style="stroke:none;stroke-width:1;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:rgb(255,255,255);fill-rule:nonzero;opacity:1;white-space:pre"><tspan x="-86.22" y="21.68">Name</tspan></text>
+  </g>
+</svg>
 `
-
-export const endSVG=`</tspan></text></g></svg>`

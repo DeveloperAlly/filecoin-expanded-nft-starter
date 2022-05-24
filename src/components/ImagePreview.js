@@ -8,7 +8,7 @@ return(
         alt="NFT image preview"
         height="200px"
         width="200px"
-        style={{ backgroundColor: "white" }}
+        style={{ backgroundColor: "black", border: "1px solid white" }}
       />
     </div>)
 }

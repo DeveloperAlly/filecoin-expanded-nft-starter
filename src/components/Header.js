@@ -1,8 +1,6 @@
 import React from "react";
-import nftHackLogo from "../assets/nfthack-logo.svg";
-import hackMakerLogo from "../assets/hackmaker_logo.jpeg";
-import gitcoinLogo from "../assets/gitcoin.png";
-import phoenixLogo from "../assets/phoenixguildLogo.jpg"
+import BuildspaceLogo from "../assets/BuildspaceLogo.svg"
+import buildspace_logo from "../assets/buildspace_logo.png"
 
 const Header = () => {
   return (
@@ -15,12 +13,12 @@ const Header = () => {
         <img
           alt="NFTHack Logo"
           style={{ height: "200px" }}
-          src={phoenixLogo}
+          src={buildspace_logo}
         ></img>
       </a>
-      <p className="header gradient-text">Phoenix Guild NFT Collection</p>
+      <p className="header gradient-text">Buildspace Women NFTs</p>
       <p className="sub-text">
-        100 personalised NFTs for Filecoin @ EthGlobal NFTHack 2022
+        100 personalised NFTs for Filecoin @ Buildspace Women 2022
       </p>
     </>
   );

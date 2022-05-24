@@ -26,6 +26,7 @@ import DisplayLinks from "./components/DisplayLinks";
 import ConnectWalletButton from "./components/ConnectWalletButton";
 import NFTViewer from "./components/NFTViewer";
 //import SaveToNFTStorage from "./components/SaveToNFTStorage";
+import InfoPage from "./pages/InfoPage";
 
 const INITIAL_LINK_STATE = {
   etherscan: "",
@@ -44,11 +45,18 @@ const CHAIN_MAPPINGS = {
   rinkeby: {
     id: 42,
     rpc: process.env.REACT_APP_RINKEBY_RPC_URL,
-    contractAddress: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+    contractAddress: {
+      erc1155: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS_1155,
+      erc721: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+    }
   },
   polygon_test: {
     id: 80001,
-    rpc: process.env.POLYGON_TEST_RPC_URL
+    rpc: process.env.POLYGON_TEST_RPC_URL,
+    contractAddress: {
+      erc1155: process.env.REACT_APP_POYGON_TEST_CONTRACT_ADDRESS_1155,
+      erc721: process.env.REACT_APP_POYGON_TEST_CONTRACT_ADDRESS
+    }
   }
 }
 
@@ -421,6 +429,7 @@ const App = () => {
           <MintNFTInput name={name} setName={setName} transactionState={transactionState} createNFTData={createNFTData}/>
         )}
         {recentlyMinted && <NFTViewer recentlyMinted={recentlyMinted}/>}
+        {/* <InfoPage connected={currentAccount === ""} connectWallet={connectWallet} /> */}
       </>
     </Layout>
   );
