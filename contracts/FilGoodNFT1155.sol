@@ -52,6 +52,7 @@ contract FilGoodNFT1155 is ERC1155 {
     constructor() ERC1155("Fil-Good NFT") {
         console.log("This is my NFT contract");
         maxNFTs = 100; //set a limit to number of nft's that are mintable
+        remainingMintableNFTs = 100;
     }
 
     function uri(uint256 _tokenId)

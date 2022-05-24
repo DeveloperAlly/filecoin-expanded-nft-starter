@@ -41,6 +41,7 @@ contract FilGoodNFT721 is ERC721URIStorage {
     constructor() ERC721("EthGlobal NFTHack2022", "Filecoin Starter NFTs") {
         console.log("This is my ERC721 NFT contract");
         maxNFTs = 100; //set a limit to number of nft's that are mintable
+        remainingMintableNFTs = 100;
     }
 
     function mintMyNFT(string memory ipfsURI) public {

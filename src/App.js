@@ -448,7 +448,7 @@ const App = () => {
         {transactionState !== INITIAL_TRANSACTION_STATE && <StatusMessage status={transactionState}/>}
         {imageView &&
           !linksObj.etherscan && <Link link={imageView} description="See IPFS image link"/>}
-        {imageView && <ImagePreview imgLink ={imageView}/>}
+        {imageView && <ImagePreview imgLink ={imageView} preview="true"/>}
         {linksObj.etherscan && <DisplayLinks linksObj={linksObj} />}
         {currentAccount === "" ? (
           <ConnectWalletButton connectWallet={connectWallet}/>
