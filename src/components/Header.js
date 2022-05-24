@@ -12,7 +12,7 @@ const Header = () => {
       >
         <img
           alt="NFTHack Logo"
-          style={{ height: "200px" }}
+          style={{ height: "100px" }}
           src={buildspace_logo}
         ></img>
       </a>

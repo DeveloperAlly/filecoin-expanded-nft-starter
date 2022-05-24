@@ -64,16 +64,16 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [name, setName] = useState("");
   const [linksObj, setLinksObj] = useState(INITIAL_LINK_STATE);
-  const [imageView, setImageView] = useState("");
+  const [imageView, setImageView] = useState(null);
   const [remainingNFTs, setRemainingNFTs] = useState("");
   const [nftCollectionData, setNftCollectionData] = useState("");
   const [recentlyMinted, setRecentlyMinted] = useState("");
+  // const [contractChoice, setcontractChoice] = useState("ERC721");
+  // const [chainChoice, setChainChoice] = useState("rinkeby");
   const [transactionState, setTransactionState] = useState(
     INITIAL_TRANSACTION_STATE
   );
   const { loading, error, success } = transactionState; //make it easier
-  const [contractChoice, setcontractChoice] = useState("ERC721");
-  const [chainChoice, setChainChoice] = useState("rinkeby");
 
   /* runs on page load - checks wallet is connected 
    Really want to run this on any changes to a wallet too
@@ -81,23 +81,24 @@ const App = () => {
   */
   useEffect(() => {
     checkIfWalletIsConnected();
+    if (window.ethereum) {
+      // window.ethereum.on("accountsChanged", accountsChanged);
+      window.ethereum.on("chainChanged", chainChanged);
+    }
   }, []);
 
   /* If a wallet is connected, do some setup and continue listening for wallet changes */
   useEffect(() => {
     setUpEventListener();
     fetchNFTCollection();
+    chainChanged();
   }, [currentAccount]);
 
   /* Create the IPFS gateway URL's when the nft collection state changes */
   useEffect(() => {
     createImageURLsForRetrieval(nftCollectionData);
-  }, [nftCollectionData])
+  }, [nftCollectionData]);
 
-  //way t
-  // useEffect(() => {
-
-  // }, [ethereum])
 
   /* Check for a wallet */
   const checkIfWalletIsConnected = async () => {
@@ -108,6 +109,7 @@ const App = () => {
       return;
     } else {
       console.log("We have the ethereum object", ethereum);
+      // checkChain();
       setUpEventListener();
     }
 
@@ -120,14 +122,15 @@ const App = () => {
     }
 
     //TODO: make sure on right network or change programatically
-    // let chainId = await ethereum.request({ method: 'eth_chainId' });
-    // console.log("Connected to chain " + chainId);
+    let chainId = await ethereum.request({ method: 'eth_chainId' });
+    console.log("Connected to chain " + chainId);
 
-    // // String, hex code of the chainId of the Rinkebey test network
-    // const rinkebyChainId = "0x4";
-    // if (chainId !== rinkebyChainId) {
-    //   alert("You are not connected to the Rinkeby Test Network!");
-    // }
+    // String, hex code of the chainId of the Rinkebey test network
+    const rinkebyChainId = "0x4";
+    if (chainId !== rinkebyChainId) {
+      changeWalletChain();
+      // alert("You are not connected to the Rinkeby Test Network!");
+    }
   };
 
   /* Connect a wallet */
@@ -149,8 +152,26 @@ const App = () => {
     }
   };
 
+  const chainChanged = async () => {
+    let chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const rinkebyChainId = "0x4";
+    if (chainId !== rinkebyChainId) {
+      changeWalletChain();
+      // alert("You are not connected to the Rinkeby Test Network!");
+    }
+    else return;
+  };
+
   const changeWalletChain = async () => {
-    //code here
+    const provider = window.ethereum;
+    try {
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x4" }]
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
   /* Listens for events emitted from the solidity contract, to render data accurately */
@@ -188,7 +209,7 @@ const App = () => {
   const resetState = () => {
     setLinksObj(INITIAL_LINK_STATE);
     setName("");
-    setImageView("");
+    setImageView(null);
   }
 
   /* Helper function for createNFTData */
@@ -301,6 +322,14 @@ const App = () => {
           filgoodNFT1155.abi,
           signer
         );
+
+        //should check user is on correct chain here before proceeding (rushed spaghetti code soz)
+        // let chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        // const rinkebyChainId = "0x4";
+        // if (chainId !== rinkebyChainId) {
+        //   changeWalletChain();
+        //   // alert("You are not connected to the Rinkeby Test Network!");
+        // }
 
         console.log("Opening wallet");
         let nftTxn = await connectedContract.mintMyNFT(IPFSurl);
