@@ -3,10 +3,11 @@ import { Message, Icon } from "semantic-ui-react";
 
 const StatusMessage = ({ status, ...props }) => {
   console.log("loading status", status);
+  const {loading, error, success, warning} = status;
   return (
-    <div style={{ height: "100px" }}>
+    <div style ={{paddingTop: "20px"}}>
       {status ? (
-        <div>
+        <div style ={{color: "white" }}>
           <Message
             compact
             icon

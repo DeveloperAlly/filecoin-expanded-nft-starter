@@ -13,7 +13,7 @@ const NFTViewer = ({recentlyMinted, ...props}) => {
             return (
                 <div className="nft-viewer-column" key={idx}>
                 {<ImagePreview imgLink={link}/>}
-                <p>Name: {el.name}</p>
+                <p>{el.name}</p>
                 </div>
             );
             })}

@@ -26,7 +26,7 @@ import DisplayLinks from "./components/DisplayLinks";
 import ConnectWalletButton from "./components/ConnectWalletButton";
 import NFTViewer from "./components/NFTViewer";
 //import SaveToNFTStorage from "./components/SaveToNFTStorage";
-import InfoPage from "./pages/InfoPage";
+// import InfoPage from "./pages/InfoPage";
 
 const INITIAL_LINK_STATE = {
   etherscan: "",
@@ -445,7 +445,7 @@ const App = () => {
     <Layout connected={currentAccount === ""} connectWallet={connectWallet}>
       <>
         <p className="sub-sub-text">{`Remaining NFT's: ${remainingNFTs}`}</p>
-        {transactionState !== INITIAL_TRANSACTION_STATE && <StatusMessage transactionState={transactionState}/>}
+        {transactionState !== INITIAL_TRANSACTION_STATE && <StatusMessage status={transactionState}/>}
         {imageView &&
           !linksObj.etherscan && <Link link={imageView} description="See IPFS image link"/>}
         {imageView && <ImagePreview imgLink ={imageView}/>}
