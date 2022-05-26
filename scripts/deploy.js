@@ -1,26 +1,15 @@
 async function main() {
-  const FilGoodNFT1155 = await hre.ethers.getContractFactory(
-    "FilGoodNFT1155"
-  );
+  const FilGoodNFT1155 = await hre.ethers.getContractFactory('FilGoodNFT1155');
   const nft1155 = await FilGoodNFT1155.deploy();
   await nft1155.deployed();
-  console.log("1155 Contract deployed to:", nft1155.address);
+  console.log('1155 Contract deployed to:', nft1155.address);
 
-  const FilGoodNFT721 = await hre.ethers.getContractFactory(
-      "FilGoodNFT721"
-  );
+  const FilGoodNFT721 = await hre.ethers.getContractFactory('FilGoodNFT721');
   const nft721 = await FilGoodNFT721.deploy();
-  await nft721.deployed()
-  console.log("721 Contract deployed to:", nft721.address);
+  await nft721.deployed();
+  console.log('721 Contract deployed to:', nft721.address);
 
-  // const fs = require('fs-extra');
-
-  // await fs.appendFile("./contracts.txt", nft721.address, function (err) {
-  //     if (err) {
-  //         return console.log(err);
-  //     }
-  //     console.log("file saved!");
-  // }); 
+  // TODO: log these outputs to a file. Does hardhat have a plugin for this?
 
   // Call the function.
   // let txn = await nftContract.mintMyNFT(
@@ -29,11 +18,11 @@ async function main() {
   // );
   // // Wait for it to be mined.
   // await txn.wait();
-};
+}
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
     process.exit(1);
-});
+  });

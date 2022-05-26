@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import filecoinLogo from "../assets/filecoin-logo.png";
+import React from 'react';
+import Header from './Header';
+import Footer from './Footer';
+import { mainDetails } from '../utils/names';
+const { href, imageAlt, logo } = mainDetails;
+import PropTypes from 'prop-types';
 
-const Layout = (props) => {
+// Todo: change the tagging here to generic inputs
+const Layout = ({ connectWallet, connected, ...props }) => {
   return (
     <div className="App">
       <div className="container">
         <div className="header-menu-container">
-          <a href="https://filecoin.io/build" target="_blank" rel="noreferrer">
-            <img
-              alt="Filecoin Foundation Logo"
-              style={{ height: "50px" }}
-              src={filecoinLogo}
-            />
+          <a href={href} target="_blank" rel="noreferrer">
+            <img alt={imageAlt} style={{ height: '50px' }} src={logo} />
           </a>
           <button
-            onClick={props.connectWallet}
+            onClick={connectWallet}
             className={
-              props.connected
-                ? "cta-button connect-to-wallet-button"
-                : "cta-button connect-wallet-button"
-            }
-          >
-            {props.connected ? "Connect to Wallet" : "Connected"}
+              connected ? 'cta-button connect-to-wallet-button' : 'cta-button connect-wallet-button'
+            }>
+            {connected ? 'Connect to Wallet' : 'Connected'}
           </button>
         </div>
         <div className="header-container">
@@ -34,6 +30,12 @@ const Layout = (props) => {
       </div>
     </div>
   );
+};
+
+Layout.propTypes = {
+  connectWallet: PropTypes.func.isRequired,
+  connected: PropTypes.bool.isRequired,
+  children: PropTypes.any
 };
 
 export default Layout;

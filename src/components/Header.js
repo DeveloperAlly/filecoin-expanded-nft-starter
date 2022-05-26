@@ -1,25 +1,15 @@
-import React from "react";
-import BuildspaceLogo from "../assets/BuildspaceLogo.svg"
-import buildspace_logo from "../assets/buildspace_logo.png"
+import React from 'react';
+import { headerDetails } from '../utils/names';
+const { href, name, title, imageAlt, logo } = headerDetails;
 
 const Header = () => {
   return (
     <>
-      <a
-        href="https://hackathons.filecoin.io/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <img
-          alt="NFTHack Logo"
-          style={{ height: "100px" }}
-          src={buildspace_logo}
-        ></img>
+      <a href={href} target="_blank" rel="noreferrer">
+        <img alt={imageAlt} style={{ height: '100px' }} src={logo}></img>
       </a>
-      <p className="header gradient-text">Buildspace Women NFTs</p>
-      <p className="sub-text">
-        100 personalised NFTs for Filecoin @ Buildspace Women 2022
-      </p>
+      <p className="header gradient-text">{name}</p>
+      <p className="sub-text">{title}</p>
     </>
   );
 };

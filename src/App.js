@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ErrorBoundary } from 'react';
 
 /* ERC71 based Solidity Contract Interface */
 import { FilGoodNFT721JSON, FilGoodNFT1155JSON } from './utils/contracts';
@@ -14,6 +14,7 @@ import CryptoJS from 'crypto-js';
 import { ethers, providers } from 'ethers';
 
 /* UI Components & Style */
+import ErrorPage from './pages/ErrorPage';
 import './styles/App.css';
 import {
   Layout,
@@ -28,39 +29,15 @@ import {
 // import SaveToNFTStorage from "./components/SaveToNFTStorage";
 // import InfoPage from "./pages/InfoPage";
 
-const INITIAL_LINK_STATE = {
-  etherscan: '',
-  opensea: '',
-  rarible: ''
-};
-
-const INITIAL_TRANSACTION_STATE = {
-  loading: '',
-  error: '',
-  success: '',
-  warning: ''
-};
-
-const CHAIN_MAPPINGS = {
-  rinkeby: {
-    id: 42,
-    rpc: process.env.REACT_APP_RINKEBY_RPC_URL,
-    contractAddress: {
-      erc1155: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS_1155,
-      erc721: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
-    }
-  },
-  polygon_test: {
-    id: 80001,
-    rpc: process.env.POLYGON_TEST_RPC_URL,
-    contractAddress: {
-      erc1155: process.env.REACT_APP_POYGON_TEST_CONTRACT_ADDRESS_1155,
-      erc721: process.env.REACT_APP_POYGON_TEST_CONTRACT_ADDRESS
-    }
-  }
-};
+import { INITIAL_LINK_STATE, INITIAL_TRANSACTION_STATE, CHAIN_MAPPINGS } from './utils/consts';
 
 const App = () => {
+  //TODO: move to context
+  const [user, setUser] = useState({
+    currentAccount: '',
+    provider: '',
+    signer: ','
+  });
   const [currentAccount, setCurrentAccount] = useState('');
   const [name, setName] = useState('');
   const [linksObj, setLinksObj] = useState(INITIAL_LINK_STATE);
@@ -168,6 +145,8 @@ const App = () => {
       alert(error.message);
     }
   };
+
+  const connectToContract = () => {};
 
   /* Listens for events emitted from the solidity contract, to render data accurately */
   const setUpEventListener = async () => {
@@ -444,6 +423,7 @@ const App = () => {
 
   /* Render our page */
   return (
+    // <ErrorBoundary FallbackComponent={ErrorPage}>
     <Layout connected={currentAccount === ''} connectWallet={connectWallet}>
       <>
         <p className="sub-sub-text">{`Remaining NFT's: ${remainingNFTs}`}</p>
@@ -471,6 +451,7 @@ const App = () => {
         {/* <InfoPage connected={currentAccount === ""} connectWallet={connectWallet} /> */}
       </>
     </Layout>
+    // </ErrorBoundary>
   );
 };
 

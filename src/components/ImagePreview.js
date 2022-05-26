@@ -1,15 +1,26 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const ImagePreview = ({imgLink, ...props}) => {
-return(
-    <div style={{marginTop: "20px", display:"contents"}}>
+const ImagePreview = ({ imgLink, preview, ...props }) => {
+  return (
+    <div style={{ marginTop: '20px', display: 'contents' }}>
       <img
         src={imgLink}
-        alt="NFT image preview"
+        alt="NFT image view"
         height="200px"
-        style={{ backgroundColor: "black", border: `${props.preview && "1px solid white"}`, padding: "5px"}}
+        style={{
+          backgroundColor: 'black',
+          border: `${preview && '1px solid white'}`,
+          padding: '5px'
+        }}
       />
-    </div>)
-}
+    </div>
+  );
+};
+
+ImagePreview.propTypes = {
+  imgLink: PropTypes.string.isRequired,
+  preview: PropTypes.bool
+};
 
 export default ImagePreview;
