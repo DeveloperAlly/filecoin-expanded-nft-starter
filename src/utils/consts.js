@@ -11,6 +11,14 @@ export const INITIAL_TRANSACTION_STATE = {
   warning: ''
 };
 
+export const NFT_METADATA_ATTRIBUTES = {
+  nftName: 'FilGood NFT 2022',
+  description: 'NFT created for FilGood Workshop 2022 and limited to 100 personalised tokens',
+  fileName: `FilGoodNFT.svg`,
+  fileType: 'image/svg+xml',
+  traits: {}
+};
+
 export const CHAIN_MAPPINGS = {
   rinkeby: {
     id: 42,

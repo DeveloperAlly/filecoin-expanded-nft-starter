@@ -1,14 +1,13 @@
 # Code Cleanup Tasks
 
 - change files to .jsx and add proptypes [done]
-- move all repeated code to own functions
 - add proptypes to all files [done]
-- add MUI and css-in-jsx helper
-- move styles to code components
-- fix wallet connections and chain changes code
-- move consts to their own file
-- move most code out of App.jsx
+- move consts to their own file [done]
 - move all wallet/user related info to one useState
+- move all repeated code to own functions OR probs use a context wrapper lib react-ethers
+- fix wallet connections and chain changes code
+- move styles to code components
+- move most code out of App.jsx
 
 # Code upgrade Tasks
 
@@ -19,6 +18,7 @@
 - script to write contract json to src/utils/contracts
 - script to write deployment contracts address to src/utils/contractscontracts.txt
 - destructure the svg so we can play around with creating dynamic NFTs.
+- add MUI and css-in-jsx helper
 
 # Style upgrade Tasks
 
@@ -35,5 +35,12 @@
 - make mutable NFTs
 - add dynamic changes for NFTs (how to show different image depending on browser?) - use Chainlink
 - potentially add dynamic properties to NFTs in the contract using drand?
+- make website responsive
 
 # Other tasks
+
+- port website to a mobile app version
+
+# Big Bad Buglist
+
+-

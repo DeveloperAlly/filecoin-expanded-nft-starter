@@ -7,7 +7,6 @@ import Layout from './Layout';
 import Link from './Link';
 import MintNFTInput from './MintNFTInput';
 import NFTViewer from './NFTViewer';
-import SaveToNFTStorage from './SaveToNFTStorage';
 import StatusMessage from './StatusMessage';
 
 export {
@@ -20,6 +19,5 @@ export {
   Link,
   MintNFTInput,
   NFTViewer,
-  SaveToNFTStorage,
   StatusMessage
 };

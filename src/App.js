@@ -26,18 +26,20 @@ import {
   ConnectWalletButton,
   NFTViewer
 } from './components';
-// import SaveToNFTStorage from "./components/SaveToNFTStorage";
+import useNFTStorage from './api/useNFTStorage';
 // import InfoPage from "./pages/InfoPage";
+import { ipfsHttpGatewayLink, NFT_METADATA_ATTRIBUTES } from './utils/consts';
 
 import { INITIAL_LINK_STATE, INITIAL_TRANSACTION_STATE, CHAIN_MAPPINGS } from './utils/consts';
 
 const App = () => {
   //TODO: move to context
-  const [user, setUser] = useState({
-    currentAccount: '',
-    provider: '',
-    signer: ','
-  });
+  // const [user, setUser] = useState({
+  //   currentAccount: '',
+  //   provider: '',
+  //   signer: ','
+  // });
+  const [provider, setProvider] = useState(null);
   const [currentAccount, setCurrentAccount] = useState('');
   const [name, setName] = useState('');
   const [linksObj, setLinksObj] = useState(INITIAL_LINK_STATE);
@@ -55,11 +57,17 @@ const App = () => {
    So we can add address, chain and network checking
   */
   useEffect(() => {
+    let provider = new ethers.providers.JsonRpcProvider([
+      process.env.REACT_APP_RINKEBY_RPC_URL,
+      'rinkeby'
+    ]);
+    console.log('provider fallback - read only', provider);
+    setProvider(provider);
     checkIfWalletIsConnected();
-    if (window.ethereum) {
-      // window.ethereum.on("accountsChanged", accountsChanged);
-      window.ethereum.on('chainChanged', chainChanged);
-    }
+    // if (window.ethereum) {
+    //   // window.ethereum.on("accountsChanged", accountsChanged);
+    //   window.ethereum.on('chainChanged', chainChanged);
+    // }
   }, []);
 
   /* If a wallet is connected, do some setup and continue listening for wallet changes */
@@ -79,7 +87,28 @@ const App = () => {
     const { ethereum } = window;
 
     if (!ethereum) {
-      console.log('Make sure you have metamask!');
+      //handle the
+      console.log('Make sure you have metamask!, using default read-only provider');
+      //use fallback provider - already set in first load of page
+      // let provider = new ethers.providers.JsonRpcProvider([
+      //   process.env.REACT_APP_RINKEBY_RPC_URL,
+      //   'rinkeby'
+      // ]);
+      // console.log('provider fallback - read only', provider);
+      // setProvider(provider);
+
+      // And for WebSockets:
+
+      // let infuraRopstenWSProvider = new ethers.providers.InfuraProvider.getWebSocketProvider(
+      //   'ropsten',
+      //   process.env.RPC_INFURA_PROJECTID
+      // );
+
+      // // You can also use a simper JRPC URL, however JRPC connections are read-only:
+
+      // let JRPC_infuraRopstenProvider = new ethers.providers.JsonRpcProvider(
+      //   process.env.RPC_INFURA_HTTP_ROPSTEN_URL
+      // );
       return;
     }
     console.log('We have the ethereum object', ethereum);
@@ -146,7 +175,15 @@ const App = () => {
     }
   };
 
-  const connectToContract = () => {};
+  const connectToProvider = async () => {};
+
+  const connectToContract = (signer) => {
+    return new ethers.Contract(
+      process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+      FilGoodNFT1155JSON.abi,
+      signer
+    );
+  };
 
   /* Listens for events emitted from the solidity contract, to render data accurately */
   const setUpEventListener = async () => {
@@ -155,6 +192,7 @@ const App = () => {
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
+        setProvider(provider);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(
           process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
@@ -186,11 +224,11 @@ const App = () => {
   /* Helper function for createNFTData */
   const createImageView = (metadata) => {
     const imgViewArray = metadata.data.image.pathname.split('/');
-    const imgViewString = `https://${imgViewArray[2]}.ipfs.nftstorage.link/${imgViewArray[3]}`;
+    const imgViewString = `https://${imgViewArray[2]}${ipfsHttpGatewayLink}${imgViewArray[3]}`;
     setImageView(imgViewString);
     console.log(
       'image view set',
-      `https://${imgViewArray[2]}.ipfs.nftstorage.link/${imgViewArray[3]}`
+      `https://${imgViewArray[2]}${ipfsHttpGatewayLink}${imgViewArray[3]}`
     );
   };
 
@@ -203,12 +241,14 @@ const App = () => {
       loading: 'Saving NFT data to NFT.Storage...'
     });
 
-    // install it
+    //not working
+    // let value = await useNFTStorage(name);
+    // console.log('value', value);
+
     // Set Up the NFT.Storage Client
     const client = new NFTStorage({
       token: process.env.REACT_APP_NFT_STORAGE_API_KEY
     });
-    console.log('got client', client);
 
     // The Advanced Encryption Standard (AES) is a U.S. Federal Information Processing Standard (FIPS).
     // It was selected after a 5-year process where 15 competing designs were evaluated.
@@ -223,62 +263,58 @@ const App = () => {
     // name, image, description, other traits.
     // useBlob to save one item to IPFS
     // use File to save all the json metadata needed - much like any object storage you're familiar with!
-    try {
-      await client
-        .store({
-          name: `${name}: FilGood NFT 2022`,
-          description:
-            'NFT created for FilGood Workshop 2022 and limited to 100 personalised tokens',
-          image: new File(
-            [
-              CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENCRYPT_KEY).toString(
-                CryptoJS.enc.Utf8
-              )
-            ],
-            `FilGoodNFT.svg`,
-            {
-              type: 'image/svg+xml'
-            }
-          ),
-          traits: {
-            awesomeness: '100' // probs should use 0-1 for solidity
+    const { nftName, description, fileName, fileType } = NFT_METADATA_ATTRIBUTES;
+    await client
+      .store({
+        name: `${name}: ${nftName}`,
+        description: description,
+        image: new File(
+          [
+            CryptoJS.AES.decrypt(data, process.env.REACT_APP_ENCRYPT_KEY).toString(
+              CryptoJS.enc.Utf8
+            )
+          ],
+          fileName,
+          {
+            type: fileType
           }
-        })
-        .then((metadata) => {
-          setTransactionState({
-            ...transactionState,
-            success:
-              'Saved NFT data to NFT.Storage...!! We created an IPFS CID & made a Filecoin Storage Deal with one call!',
-            loading: ''
-          });
-          console.log('metadata saved', metadata);
-
-          // To view the data we just saved in the browser we need to use an IPFS http bridge
-          // Or Brave Browser / Opera which have IPFS integration built into them
-          // Or run a local IPFS node (there's a desktop app)
-          // I'll use a gateway, so
-          // This means manipulating the returned CID to configure it for a gateway...
-          // Check gateways & their functionality here: https://ipfs.github.io/public-gateway-checker/
-          createImageView(metadata);
-
-          // we can also check the status of our data (such as storage deals made) using this
-          // const status = await client.status(metadata.ipnft);
-          // console.log("status", status);
-
-          // Now that we have a CID and our data is stored on Filecoin,
-          // - we'll mint the NFT with the token data (and IPFS CID)
-          askContractToMintNft(metadata.url);
+        ),
+        traits: {
+          awesomeness: '100'
+        }
+      })
+      .then((metadata) => {
+        setTransactionState({
+          ...transactionState,
+          success:
+            'Saved NFT data to NFT.Storage...!! We created an IPFS CID & made a Filecoin Storage Deal with one call!',
+          loading: ''
         });
-    } catch (err) {
-      console.log('Could not save NFT to NFT.Storage - Aborted minting', err);
-      setTransactionState({
-        ...INITIAL_TRANSACTION_STATE,
-        error: 'Could not save NFT to NFT.Storage - Aborted minting'
+        // To view the data we just saved in the browser we need to use an IPFS http bridge
+        // Or Brave Browser / Opera which have IPFS integration built into them
+        // Or run a local IPFS node (there's a desktop app)
+        // I'll use a gateway, so
+        // This means manipulating the returned CID to configure it for a gateway...
+        // Check gateways & their functionality here: https://ipfs.github.io/public-gateway-checker/
+        createImageView(metadata);
+
+        // we can also check the status of our data (such as storage deals made) using this
+        // const status = await client.status(metadata.ipnft);
+        // console.log("status", status);
+
+        // Now that we have a CID and our data is stored on Filecoin,
+        // - we'll mint the NFT with the token data (and IPFS CID)
+        askContractToMintNft(metadata.url);
+      })
+      .catch((error) => {
+        setTransactionState({
+          ...INITIAL_TRANSACTION_STATE,
+          error: `Could not save NFT to NFT.Storage - Aborted minting: \n ${error}`
+        });
       });
-    }
   };
 
-  /* Mint the NFT on the eth blockchain */
+  /* Mint the NFT on the rinkeby eth blockchain */
   const askContractToMintNft = async (IPFSurl) => {
     // should check the wallet chain is correct here
     setTransactionState({
@@ -287,28 +323,26 @@ const App = () => {
     });
 
     try {
+      //let's remove this code so it's more generic
       const { ethereum } = window;
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
+        // checkIfWalletIsConnected()
+        console.log('provider', provider);
+        // A Signer in ethers is an abstraction of an Ethereum Account, which can be used to
+        // sign messages and transactions and send signed transactions to the Ethereum Network
+        // to execute state changing operations.
         const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(
-          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
-          FilGoodNFT1155JSON.abi,
-          signer
-        );
+        //check signer is on right chain
+        console.log('signer', signer);
 
-        // should check user is on correct chain here before proceeding (rushed spaghetti code soz)
-        // let chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        // const rinkebyChainId = "0x4";
-        // if (chainId !== rinkebyChainId) {
-        //   changeWalletChain();
-        //   // alert("You are not connected to the Rinkeby Test Network!");
-        // }
+        const connectedContract = connectToContract(signer);
 
         console.log('Opening wallet');
         const nftTxn = await connectedContract.mintMyNFT(IPFSurl);
 
+        //why does this need to be here :/
         connectedContract.on('NewFilGoodNFTMinted', (from, tokenId, tokenURI) => {
           console.log('event listener', from, tokenId.toNumber(), tokenURI);
           setLinksObj({
@@ -325,6 +359,11 @@ const App = () => {
 
         // SHOULD UPDATE IMAGELINK to returned value
         await nftTxn.wait();
+        // nftTxn.on('receipt', function (receipt) {
+        //   console.log('nfttxn', receipt.logs[0].topics[3]); // this prints the hex value of the tokenId
+        //   // you can use `web3.utils.hexToNumber()` to convert it to decimal
+        // });
+        // console.log('nftTxn', nftTxn);
         setTransactionState({
           ...INITIAL_TRANSACTION_STATE,
           success: 'NFT Minted!'
@@ -417,7 +456,7 @@ const App = () => {
       })
       .catch((err) => console.log('error fetching nft collection data', err));
 
-    // //do this in an effect when collection changes
+    // do this in an effect when collection changes
     // await createImageURLsForRetrieval(nftCollectionData);
   };
 
