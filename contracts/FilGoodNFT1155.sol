@@ -42,8 +42,8 @@ contract FilGoodNFT1155 is ERC1155 {
 
     //This event lets the blockchain know every time a new NFT is minted & how many are left
     event NewFilGoodNFTMinted(
-        address sender,
-        uint256 tokenId,
+        address indexed sender,
+        uint256 indexed tokenId,
         string tokenURI,
         uint256 remainingMintableNFTs
     );

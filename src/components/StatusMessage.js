@@ -59,9 +59,9 @@ const StatusMessage = ({ status, ...props }) => {
 StatusMessage.propTypes = {
   status: PropTypes.shape({
     loading: PropTypes.string,
-    error: PropTypes.string,
-    success: PropTypes.string,
-    warning: PropTypes.string
+    error: PropTypes.any,
+    success: PropTypes.any,
+    warning: PropTypes.any
   })
 };
 

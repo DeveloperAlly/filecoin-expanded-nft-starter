@@ -31,8 +31,8 @@ contract FilGoodNFT721 is ERC721URIStorage {
     }
     */
     event NewFilGoodNFTMinted(
-        address sender,
-        uint256 tokenId,
+        address indexed sender,
+        uint256 indexed tokenId,
         string tokenURI,
         uint256 remainingMintableNFTs
     );

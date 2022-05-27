@@ -1,14 +1,27 @@
+# IDEALLY BEFORE GRAPH HACK
+
+- multi chain checked & working and displayed in a table
+- multi-options (video, music, image, markdown file) checked & working
+- dynamic NFTs with Chainlink Keepers
+- using DRand to generate attributes
+- add a Factory. (moonshot)
+
 # Code Cleanup Tasks
 
-- change files to .jsx and add proptypes [done]
+- add linting [done]
+- Add proptypes [done]
 - add proptypes to all files [done]
 - move consts to their own file [done]
-- move all wallet/user related info to one useState
+- fix NFT.Storage react hook
+- move all wallet/user related info to one place
 - move all repeated code to own functions OR probs use a context wrapper lib react-ethers [WIP]
 - fix wallet connections and chain changes code
-- fix repeated calls to fetchContract
+- add support to read latest NFTs without wallet connection [done]
+- fix repeated calls to fetchContract [done]
 - move styles to code components
 - move most code out of App.jsx
+- check if this works with polygon
+- show 'get metamask' on button if no window.ethereum object
 
 # Code upgrade Tasks
 
@@ -20,15 +33,19 @@
 - script to write deployment contracts address to src/utils/contractscontracts.txt
 - destructure the svg so we can play around with creating dynamic NFTs.
 - add MUI and css-in-jsx helper
+- make Typescript version
+- make Next.js version
 
 # Style upgrade Tasks
 
-- StatusMessage upgrade
+- StatusMessage upgrade to toast hook
 - Carousel gallery for NFTs minted (not just last 5)
 - Add style sheet to change themes
 
 # Future features List
 
+- create fully featured NFT.Storage react hooks & ship to npm
+- add hooks to support all sorts of NFT.Storage uploads - video, audio etc.
 - add wallet Connect (not just metamask)
 - Check multichain deployments
 - Make a factory that deploys these at each workshop and keeps track of all contracts deployed!!
@@ -41,6 +58,9 @@
 # Other tasks
 
 - port website to a mobile app version
+- mutable NFTs addition
+- gaming...
+- make creact-react-eth-nft-dapp (auto deploy to fleek?)
 
 # Big Bad Buglist
 
