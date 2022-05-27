@@ -89,6 +89,6 @@ export const baseSVG = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
   </g>
   <g style="text-anchor:middle;text-align:centre;dominant-baseline: middle;">
   <text xml:space="preserve" font-family="Raleway" font-size="69" font-style="normal" font-weight="700" style="stroke:none;stroke-width:1;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:rgb(255,255,255);fill-rule:nonzero;opacity:1;white-space:pre"><tspan x="50%" y="90%">
-`
+`;
 
-export const endSVG=`</tspan></text></g></svg>`
+export const endSVG = `</tspan></text></g></svg>`;

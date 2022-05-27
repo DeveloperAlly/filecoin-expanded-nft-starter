@@ -4,8 +4,9 @@
 - add proptypes to all files [done]
 - move consts to their own file [done]
 - move all wallet/user related info to one useState
-- move all repeated code to own functions OR probs use a context wrapper lib react-ethers
+- move all repeated code to own functions OR probs use a context wrapper lib react-ethers [WIP]
 - fix wallet connections and chain changes code
+- fix repeated calls to fetchContract
 - move styles to code components
 - move most code out of App.jsx
 

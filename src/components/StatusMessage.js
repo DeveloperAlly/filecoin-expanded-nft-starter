@@ -1,3 +1,5 @@
+//move transactions to a toast context provider
+//www.codementor.io/@hurwitzse/how-i-create-my-own-react-hooks-and-why-you-should-too-1t6dseymmo
 import React from 'react';
 import { Message, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';

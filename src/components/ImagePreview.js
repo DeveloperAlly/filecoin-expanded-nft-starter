@@ -20,7 +20,7 @@ const ImagePreview = ({ imgLink, preview, ...props }) => {
 
 ImagePreview.propTypes = {
   imgLink: PropTypes.string.isRequired,
-  preview: PropTypes.bool
+  preview: PropTypes.string
 };
 
 export default ImagePreview;

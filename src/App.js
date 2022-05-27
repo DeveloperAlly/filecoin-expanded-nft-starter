@@ -14,7 +14,7 @@ import CryptoJS from 'crypto-js';
 import { ethers, providers } from 'ethers';
 
 /* UI Components & Style */
-import ErrorPage from './pages/ErrorPage';
+// import ErrorPage from './pages/ErrorPage';
 import './styles/App.css';
 import {
   Layout,
@@ -28,41 +28,81 @@ import {
 } from './components';
 import useNFTStorage from './api/useNFTStorage';
 // import InfoPage from "./pages/InfoPage";
-import { ipfsHttpGatewayLink, NFT_METADATA_ATTRIBUTES } from './utils/consts';
 
-import { INITIAL_LINK_STATE, INITIAL_TRANSACTION_STATE, CHAIN_MAPPINGS } from './utils/consts';
+import { useMoralis, useApiContract } from 'react-moralis';
+
+import {
+  INITIAL_LINK_STATE,
+  INITIAL_TRANSACTION_STATE,
+  ipfsHttpGatewayLink,
+  NFT_METADATA_ATTRIBUTES,
+  CHAIN_MAPPINGS
+} from './utils/consts';
+
+const options = {
+  functionName: 'getNFTCollection',
+  address: process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS_1155,
+  abi: FilGoodNFT1155JSON.abi,
+  chain: 'rinkeby'
+  // params: {}
+  // params: {
+  //   secondsAgos: [0, 10]
+  // }
+};
 
 const App = () => {
-  //TODO: move to context
-  // const [user, setUser] = useState({
-  //   currentAccount: '',
-  //   provider: '',
-  //   signer: ','
-  // });
-  const [provider, setProvider] = useState(null);
   const [currentAccount, setCurrentAccount] = useState('');
   const [name, setName] = useState('');
   const [linksObj, setLinksObj] = useState(INITIAL_LINK_STATE);
   const [imageView, setImageView] = useState(null);
   const [remainingNFTs, setRemainingNFTs] = useState('');
-  const [nftCollectionData, setNftCollectionData] = useState('');
   const [recentlyMinted, setRecentlyMinted] = useState('');
   // const [contractChoice, setcontractChoice] = useState("ERC721");
   // const [chainChoice, setChainChoice] = useState("rinkeby");
   const [transactionState, setTransactionState] = useState(INITIAL_TRANSACTION_STATE);
   const { loading, error, success } = transactionState; // make it easier
+  // const { web3, enableWeb3, isWeb3Enabled, isWeb3EnableLoading, web3EnableError } = useMoralis();
 
   /* runs on page load - checks wallet is connected 
    Really want to run this on any changes to a wallet too
    So we can add address, chain and network checking
   */
+
+  const { Moralis, isInitialized, isInitializing } = useMoralis();
+
   useEffect(() => {
-    let provider = new ethers.providers.JsonRpcProvider([
-      process.env.REACT_APP_RINKEBY_RPC_URL,
-      'rinkeby'
-    ]);
-    console.log('provider fallback - read only', provider);
-    setProvider(provider);
+    console.log('no init');
+    if (isInitialized) {
+      console.log('init', isInitialized, FilGoodNFT1155JSON.abi); // <- is true
+      runContractFunction();
+    }
+  }, [isInitialized]);
+
+  // const fetchAndNotify = () => {
+  //   getRemainingNFTs({
+  //     onSuccess: (data) => console.log('success', data),
+  //     onError: (error) => console.log('error', error)
+  //   });
+  // };
+  const {
+    runContractFunction,
+    data: nftCollectionData,
+    error: cerror,
+    isLoading,
+    isFetching
+  } = useApiContract(options);
+
+  // Tester function
+  // useEffect(() => {
+  //   console.log('getem', nftCollectionData, cerror, isLoading, isFetching);
+  // }, [nftCollectionData, cerror, isLoading, isFetching]);
+
+  useEffect(() => {
+    // Initialise the Moralis server
+    Moralis.start({
+      appId: process.env.REACT_APP_MORALIS_APP_ID,
+      serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL
+    });
     checkIfWalletIsConnected();
     // if (window.ethereum) {
     //   // window.ethereum.on("accountsChanged", accountsChanged);
@@ -73,14 +113,23 @@ const App = () => {
   /* If a wallet is connected, do some setup and continue listening for wallet changes */
   useEffect(() => {
     setUpEventListener();
-    fetchNFTCollection();
     chainChanged();
   }, [currentAccount]);
 
   /* Create the IPFS gateway URL's when the nft collection state changes */
   useEffect(() => {
-    createImageURLsForRetrieval(nftCollectionData);
+    console.log('nftfetchthings', nftCollectionData);
+    if (nftCollectionData) {
+      createImageURLsForRetrieval(nftCollectionData);
+    }
   }, [nftCollectionData]);
+
+  // const {
+  //   data: eventData,
+  //   error: eventError,
+  //   loading: eventLoading,
+  //   postToNftStorage
+  // } = useNFTStorage(name);
 
   /* Check for a wallet */
   const checkIfWalletIsConnected = async () => {
@@ -185,33 +234,80 @@ const App = () => {
     );
   };
 
-  /* Listens for events emitted from the solidity contract, to render data accurately */
+  /* Listens for events emitted from the solidity contract, to render data accurately
+    This should not rely on having a web wallet connection. 
+  */
   const setUpEventListener = async () => {
-    try {
-      const { ethereum } = window;
+    let provider = new ethers.providers.JsonRpcProvider([
+      process.env.REACT_APP_RINKEBY_RPC_URL,
+      'rinkeby'
+    ]);
+    const signer = provider.getSigner();
+    console.log('signer', signer);
+    const connectedContract = new ethers.Contract(
+      process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+      FilGoodNFT1155JSON.abi,
+      signer
+    );
+    console.log('CONTRACT CONNECTED', connectedContract);
 
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        setProvider(provider);
-        const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(
-          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
-          FilGoodNFT1155JSON.abi,
-          signer
-        );
-        console.log('CONNECTED', connectedContract);
+    // fetchNFTCollection(connectedContract);
+    // await connectedContract
+    //   .nftCollection()
+    //   .then((collection) => {
+    //     console.log('collection', collection);
+    //     setNftCollectionData(collection); // update state
+    //   })
+    //   .catch((err) => console.log('error fetching nft collection data', err));
 
-        connectedContract.on('NewFilGoodNFTMinted', (sender, tokenId, tokenURI, remainingNFTs) => {
-          console.log('event - new minted NFT');
-          fetchNFTCollection();
-          setRemainingNFTs(remainingNFTs);
-        });
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    connectedContract.on('NewFilGoodNFTMinted', (sender, tokenId, tokenURI, remainingNFTs) => {
+      console.log('event - new minted NFT');
+      setLinksObj({
+        ...linksObj,
+        opensea: `https://testnets.opensea.io/assets/${
+          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+        }/${tokenId.toNumber()}`,
+        rarible: `https://rinkeby.rarible.com/token/${
+          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+        }:${tokenId.toNumber()}`
+      });
+      // fetchNFTCollection(connectedContract);
+      setRemainingNFTs(remainingNFTs);
+    });
+
+    // try {
+    //   const { ethereum } = window;
+
+    //   if (ethereum) {
+    //     const provider = new ethers.providers.Web3Provider(ethereum);
+    //     const signer = provider.getSigner();
+    //     const connectedContract = new ethers.Contract(
+    //       process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+    //       FilGoodNFT1155JSON.abi,
+    //       signer
+    //     );
+    //     console.log('CONNECTED', connectedContract);
+
+    //     connectedContract.on('NewFilGoodNFTMinted', (sender, tokenId, tokenURI, remainingNFTs) => {
+    //       console.log('event - new minted NFT');
+    //       setLinksObj({
+    //         ...linksObj,
+    //         opensea: `https://testnets.opensea.io/assets/${
+    //           process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+    //         }/${tokenId.toNumber()}`,
+    //         rarible: `https://rinkeby.rarible.com/token/${
+    //           process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+    //         }:${tokenId.toNumber()}`
+    //       });
+    //       // fetchNFTCollection();
+    //       setRemainingNFTs(remainingNFTs);
+    //     });
+    //   } else {
+    //     console.log("Ethereum object doesn't exist!");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   /* Helper function for createNFTData */
@@ -234,6 +330,8 @@ const App = () => {
 
   /* Create the IPFS CID of the json data */
   const createNFTData = async () => {
+    // check if user has wallet connected & ready (connect & useCallback otherwise)
+    // check if user is on right chain (change and useCallback otherwise)
     console.log('saving to NFT storage');
     resetState();
     setTransactionState({
@@ -322,63 +420,59 @@ const App = () => {
       loading: 'Approving & minting NFT...'
     });
 
-    try {
-      //let's remove this code so it's more generic
-      const { ethereum } = window;
+    //let's remove this code so it's more generic
+    const { ethereum } = window;
 
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        // checkIfWalletIsConnected()
-        console.log('provider', provider);
-        // A Signer in ethers is an abstraction of an Ethereum Account, which can be used to
-        // sign messages and transactions and send signed transactions to the Ethereum Network
-        // to execute state changing operations.
-        const signer = provider.getSigner();
-        //check signer is on right chain
-        console.log('signer', signer);
+    if (ethereum) {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      // should check a wallet is connected and it is on the correct chain here.
+      console.log('provider', provider);
+      // A Signer in ethers is an abstraction of an Ethereum Account, which can be used to
+      // sign messages and transactions and send signed transactions to the Ethereum Network
+      // to execute state changing operations.
+      const signer = provider.getSigner();
+      console.log('signer', signer);
 
-        const connectedContract = connectToContract(signer);
+      const connectedContract = connectToContract(signer);
 
-        console.log('Opening wallet');
-        const nftTxn = await connectedContract.mintMyNFT(IPFSurl);
-
-        //why does this need to be here :/
-        connectedContract.on('NewFilGoodNFTMinted', (from, tokenId, tokenURI) => {
-          console.log('event listener', from, tokenId.toNumber(), tokenURI);
-          setLinksObj({
-            ...linksObj,
-            opensea: `https://testnets.opensea.io/assets/${
-              process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
-            }/${tokenId.toNumber()}`,
-            rarible: `https://rinkeby.rarible.com/token/${
-              process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
-            }:${tokenId.toNumber()}`,
-            etherscan: `https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
+      console.log('Opening wallet');
+      // TODO: fix THIS CODE IS FAR TOO HARD TO READ
+      await connectedContract
+        .mintMyNFT(IPFSurl)
+        .then(async (data) => {
+          console.log('nftTxn data', data);
+          await data
+            .wait()
+            .then((tx) => {
+              console.log('nft minted tx', tx, tx.logs);
+              setLinksObj({
+                ...linksObj,
+                etherscan: `https://rinkeby.etherscan.io/tx/${data.hash}`
+              });
+              setTransactionState({
+                ...INITIAL_TRANSACTION_STATE,
+                success: `NFT Minted!`
+              });
+            })
+            .catch((error) => {
+              setTransactionState({
+                ...INITIAL_TRANSACTION_STATE,
+                error: `Error Minting NFT. ${error.message}`
+              });
+            });
+        })
+        .catch((err) => {
+          console.log('err', err);
+          setTransactionState({
+            ...INITIAL_TRANSACTION_STATE,
+            error: `Error Minting NFT. ${error.message}`
           });
         });
-
-        // SHOULD UPDATE IMAGELINK to returned value
-        await nftTxn.wait();
-        // nftTxn.on('receipt', function (receipt) {
-        //   console.log('nfttxn', receipt.logs[0].topics[3]); // this prints the hex value of the tokenId
-        //   // you can use `web3.utils.hexToNumber()` to convert it to decimal
-        // });
-        // console.log('nftTxn', nftTxn);
-        setTransactionState({
-          ...INITIAL_TRANSACTION_STATE,
-          success: 'NFT Minted!'
-        });
-      } else {
-        console.log("Ethereum object doesn't exist!");
-        setTransactionState({
-          ...INITIAL_TRANSACTION_STATE,
-          error: `No Wallet connected`
-        });
-      }
-    } catch (error) {
+    } else {
+      console.log("Ethereum object doesn't exist!");
       setTransactionState({
         ...INITIAL_TRANSACTION_STATE,
-        error: `Error Minting NFT. ${error.message}`
+        error: `No Wallet connected`
       });
     }
   };
@@ -424,41 +518,33 @@ const App = () => {
     1. The blockchain
     2. Filecoin via IPFS addressing & http gateways
  */
-  const fetchNFTCollection = async () => {
-    console.log('fetching nft collection');
-    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RINKEBY_RPC_URL);
-    await provider.getBlockNumber().then((result) => {
-      console.log(`Current block number: ${result}`);
-    });
-    // provider is read-only get a signer for on-chain transactions
-    // const signer = provider.getSigner();
-    // const provider = new ethers.providers.Web3Provider(ethereum);
-    // const signer = provider.getSigner();
-    const connectedContract = new ethers.Contract(
-      process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
-      FilGoodNFT1155JSON.abi,
-      provider
-    );
+  // const fetchNFTCollection = async (connectedContract) => {
+  //   console.log('fetching nft collection');
+  //   // const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RINKEBY_RPC_URL);
+  //   // await provider.getBlockNumber().then((result) => {
+  //   //   console.log(`Current block number: ${result}`);
+  //   // });
+  //   // // provider is read-only get a signer for on-chain transactions
+  //   // // const signer = provider.getSigner();
+  //   // // const provider = new ethers.providers.Web3Provider(ethereum);
+  //   // // const signer = provider.getSigner();
+  //   // const connectedContract = new ethers.Contract(
+  //   //   process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
+  //   //   FilGoodNFT1155JSON.abi,
+  //   //   provider
+  //   // );
 
-    await connectedContract
-      .remainingMintableNFTs()
-      .then((remainingNFTs) => {
-        console.log('resp', remainingNFTs);
-        setRemainingNFTs(remainingNFTs.toNumber()); // update state
-      })
-      .catch((err) => console.log('error getting remaining nfts', err));
+  //   await connectedContract
+  //     .getNFTCollection()
+  //     .then((collection) => {
+  //       console.log('collection', collection);
+  //       setNftCollectionData(collection); // update state
+  //     })
+  //     .catch((err) => console.log('error fetching nft collection data', err));
 
-    await connectedContract
-      .getNFTCollection()
-      .then((collection) => {
-        console.log('collection', collection);
-        setNftCollectionData(collection); // update state
-      })
-      .catch((err) => console.log('error fetching nft collection data', err));
-
-    // do this in an effect when collection changes
-    // await createImageURLsForRetrieval(nftCollectionData);
-  };
+  //   // do this in an effect when collection changes
+  //   // await createImageURLsForRetrieval(nftCollectionData);
+  // };
 
   /* Render our page */
   return (

@@ -10,7 +10,7 @@ const ConnectWalletButton = ({ connectWallet, ...props }) => {
 };
 
 ConnectWalletButton.propTypes = {
-  connectWallet: PropTypes.string.isRequired
+  connectWallet: PropTypes.func.isRequired
 };
 
 export default ConnectWalletButton;

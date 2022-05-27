@@ -25,7 +25,7 @@ const NFTViewer = ({ recentlyMinted, ...props }) => {
 };
 
 NFTViewer.propTypes = {
-  recentlyMinted: PropTypes.object
+  recentlyMinted: PropTypes.array
 };
 
 export default NFTViewer;
