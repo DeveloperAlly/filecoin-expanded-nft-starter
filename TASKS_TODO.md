@@ -35,6 +35,8 @@
 - add MUI and css-in-jsx helper
 - make Typescript version
 - make Next.js version
+- wrap app with no internet fallbacks
+- fallbacks for images
 
 # Style upgrade Tasks
 

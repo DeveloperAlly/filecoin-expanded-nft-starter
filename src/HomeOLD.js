@@ -46,10 +46,6 @@ import {
   NFT_METADATA_ATTRIBUTES,
   CHAIN_MAPPINGS
 } from './utils/consts';
-// import walletFunctions from './page_components/wallet_functions';
-// import connectWallet from './page_components/wallet_functions';
-// import setWalletListeners from './page_components/wallet_functions';
-// import checkForConnection from './page_components/wallet_functions';
 
 const jsonRpcOptions = {
   functionName: 'getNFTCollection',
@@ -68,7 +64,9 @@ const Home = () => {
    */
   // this is to connect to our app and display pages even when no wallet is connected
   const { Moralis, isInitialized, isInitializing } = useMoralis();
-  const [userWallet, setUserWallet] = useState({ accounts: [], chainId: null });
+
+  //   const [currentAccount, setCurrentAccount] = useState('');
+  const [userWallet, setUserWallet] = useState({ accounts: '', chainId: '' });
   const [name, setName] = useState('');
   const [linksObj, setLinksObj] = useState(INITIAL_LINK_STATE);
   const [imageView, setImageView] = useState(null);
@@ -79,22 +77,7 @@ const Home = () => {
   const [transactionState, setTransactionState] = useState(INITIAL_TRANSACTION_STATE);
   const [contractOptions, setContractOptions] = useState(jsonRpcOptions); //inludes chain choice and contract choice
 
-  /**
-   * This hook will load data from our NFT contract without a wallet being connected
-   * This is so that the page will load and display properly for any and all users
-   * They will need a wallet to Mint the NFTs though.
-   * Note: I'm not using all the variables that are returned from this
-   * hook as I deal with errors and data returns elsewhere
-   */
-  const { runContractFunction: fetchNFTCollection } = useApiContract(jsonRpcOptions);
-  // Fetch the number of NFTs remaining
-  const { runContractFunction: getRemainingMintableNFTs } = useApiContract({
-    ...jsonRpcOptions,
-    functionName: 'getRemainingMintableNFTs'
-  });
-
   const { loading, error, success } = transactionState; // make it easier
-  const { ethereum } = window;
 
   // Runs on page load
   useEffect(() => {
@@ -104,78 +87,13 @@ const Home = () => {
       appId: process.env.REACT_APP_MORALIS_APP_ID,
       serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL
     });
+    const { ethereum } = window;
     if (ethereum) {
-      setWalletListeners();
-      console.log('eth exists', ethereum);
-      checkForWalletConnection();
+      console.log('eth exists');
+      //   makechainIdRequest;
+      //fetchWalletChain(); => only do this when clicking mint? Or show in a warning
     }
   }, []);
-
-  const checkForWalletConnection = async () => {
-    //function returns an empty array if wallet not connected
-    await ethereum
-      .request({ method: 'eth_accounts' })
-      .then((accounts) => {
-        console.log('got accounts', accounts);
-        setUserWallet({ ...userWallet, accounts });
-      })
-      .catch((err) => {
-        console.log('error fetching accounts');
-      });
-  };
-
-  //   const [walletChangeLoading, setWalletChangeLoading] = useState(false);
-  const setWalletListeners = () => {
-    // let provider = new ethers.providers.JsonRpcProvider([
-    //   process.env.REACT_APP_RINKEBY_RPC_URL,
-    //   'rinkeby'
-    // ]);
-    // const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-    // subscribe to provider events compatible with EIP-1193 standard.
-    ethereum.on('accountsChanged', (accounts) => {
-      console.log('wallet: accounts', accounts);
-      //logic to check if disconnected accounts[] is empty
-      setUserWallet({ ...userWallet, accounts });
-    });
-
-    // Subscribe to chainId change
-    // This function fires twice - why
-    ethereum.on('chainChanged', (chainId) => {
-      console.log('wallet: chainId', chainId);
-      setUserWallet({ ...userWallet, chainId });
-      checkWalletChain(chainId);
-    });
-
-    // These have nothing to do with wallet - contracts only
-    // // Subscribe to provider connection
-    // provider.on('connect', (info) => {
-    //   //info : { chainId: number }
-    //   console.log('wallet: connect', info);
-    // });
-
-    // // Subscribe to provider disconnection
-    // provider.on('disconnect', (error) => {
-    //   //error: : { code: number; message: string }
-    //   console.log('wallet: disconnect', error);
-    // });
-  };
-
-  /* Connect a wallet - only do this when user clicks wallet connection*/
-  const connectWallet = async () => {
-    console.log('connecting to a wallet');
-    if (ethereum) {
-      await ethereum
-        .request({ method: 'eth_requestAccounts' })
-        .then((accounts) => {
-          console.log('got accounts', accounts);
-          setUserWallet({ ...userWallet, accounts });
-          // setWalletListeners(); // unecessary
-        })
-        .catch((err) => {
-          console.log('error fetching accounts');
-        });
-    }
-  };
 
   // Runs when 'isInitialized' changes
   useEffect(() => {
@@ -183,25 +101,8 @@ const Home = () => {
     if (isInitialized) {
       console.log('Server is initialized. Fetching display data...');
       getDisplayData();
-      setContractEventListener();
-      //let's also set up contract event listeners here....
     }
   }, [isInitialized]);
-
-  const setContractEventListener = () => {
-    let provider = new ethers.providers.JsonRpcProvider([
-      process.env.REACT_APP_RINKEBY_RPC_URL,
-      'rinkeby'
-    ]);
-    // const signer = provider.getSigner();
-    // console.log('signer', signer);
-    const connectedContract = new ethers.Contract(
-      process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS,
-      FilGoodNFT1155JSON.abi,
-      provider
-    );
-    console.log('CONTRACT CONNECTED', connectedContract);
-  };
 
   const getDisplayData = () => {
     console.log(`Fetching NFT Collection...`); //on ${chainChoice} network
@@ -238,28 +139,175 @@ const Home = () => {
       });
   };
 
-  const checkWalletChain = async (chainId) => {
-    //returns a boolean if this matches the contract desired
-    //     // String, hex code of the chainId of the Rinkebey test network
-    const rinkebyChainId = '0x4';
-    if (chainId !== rinkebyChainId) {
-      changeWalletChain();
-      // alert("You are not connected to the Rinkeby Test Network!");
-    }
-    //   };
+  //   /* If a wallet is connected, do some setup and continue listening for wallet changes */
+  //   useEffect(() => {
+  //     setUpEventListener();
+  //     // chainChanged();
+  //   }, [currentAccount]);
+
+  /**
+   * This hook will load data from our NFT contract without a wallet being connected
+   * This is so that the page will load and display properly for any and all users
+   * They will need a wallet to Mint the NFTs though.
+   * Note: I'm not using all the variables that are returned from this
+   * hook as I deal with errors and data returns elsewhere
+   */
+  const { runContractFunction: fetchNFTCollection } = useApiContract(jsonRpcOptions);
+  // Fetch the number of NFTs remaining
+  const { runContractFunction: getRemainingMintableNFTs } = useApiContract({
+    ...jsonRpcOptions,
+    functionName: 'getRemainingMintableNFTs'
+  });
+
+  const setWalletListeners = () => {};
+
+  /* Check for a wallet */
+  //rename to isWalletConnected
+  //   const checkIfWalletIsConnected = async () => {
+  //     const { ethereum } = window;
+
+  //     if (!ethereum) {
+  //       // A wallet cannot be detected on the browser - we should give the user a visual
+  //       // letting them know they need a wallet to use this app / mint an NFT
+  //       console.log('Make sure you have metamask!, using default read-only provider');
+  //       return;
+  //     }
+
+  //     /** REMOVE ALL CODE BELOW HERE - checkIfWalletIsConnected should just check for ethereum obj
+  //      * We can ask use to connect wallet when they click the connect button
+  //      */
+  //     // checkChain();
+  //     // setUpEventListener();
+
+  //     const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+  //     if (accounts.length !== 0) {
+  //       setCurrentAccount(accounts[0]);
+  //     } else {
+  //       console.log('No authorized account found');
+  //     }
+
+  //     // TODO: make sure on right network or change programatically
+  //     const chainId = await ethereum.request({ method: 'eth_chainId' });
+  //     console.log(`Connected to chain ${chainId}`);
+
+  //     // String, hex code of the chainId of the Rinkebey test network
+  //     // const rinkebyChainId = '0x4';
+  //     // if (chainId !== rinkebyChainId) {
+  //     //   changeWalletChain();
+  //     //   // alert("You are not connected to the Rinkeby Test Network!");
+  //     // }
+  //   };
+
+  const isCorrectWalletChain = async () => {
+    //returns a boolean if this matches the contract
   };
 
-  const changeWalletChain = async () => {
-    const provider = window.ethereum;
+  const setWalletListener = () => {
+    let provider = new ethers.providers.JsonRpcProvider([
+      process.env.REACT_APP_RINKEBY_RPC_URL,
+      'rinkeby'
+    ]);
+    // subscribe to provider events compatible with EIP-1193 standard.
+    provider.on('accountsChanged', (accounts) => {
+      console.log(accounts);
+    });
+
+    // Subscribe to chainId change
+    provider.on('chainChanged', (chainId) => {
+      console.log(chainId);
+    });
+
+    // Subscribe to provider connection
+    provider.on('connect', (info) => {
+      //info : { chainId: number }
+      console.log(info);
+    });
+
+    // Subscribe to provider disconnection
+    provider.on('disconnect', (error) => {
+      //error: : { code: number; message: string }
+      console.log(error);
+    });
+    // console.log('Setting up to listen for wallet events');
+    // try {
+    //   const { ethereum } = window;
+    //   ethereum.on('chainChanged', (chainId) => {
+    //     // location.reload();
+    //     console.log('new chain', chainId);
+    //   });
+    //   ethereum.on('accountsChanged', (accounts) => {
+    //     // location.reload();
+    //     if (!accounts) {
+    //       console.log('Deal with user logging out of wallet');
+    //     }
+    //     console.log('new account', accounts);
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  /* Connect a wallet - only do this when user clicks wallet connection*/
+  const connectWallet = async () => {
+    console.log('connecting to a wallet');
     try {
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x4' }]
-      });
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        //better to show this on the button
+        alert('Get MetaMask!');
+        return;
+      }
+      //   setWalletListener();
+      //   console.log('Fetching user Accounts');
+      //   enableWeb3().then((data) => {
+      //     console.log('web3 enabled', data);
+      //   });
+      // accountRequest()
+      //   .then((accounts) => {
+      //     setCurrentAccount(accounts[0]);
+      //     setUserWallet({ ...userWallet, accounts });
+      //   })
+      //   .catch((err) => {
+      //     setTransactionState({
+      //       ...transactionState,
+      //       error: `Error getting wallet accounts: ${err}`
+      //     });
+      //   });
+      //   chainIdRequest().then((chainId) => {
+      //     setUserWallet({ ...userWallet, chainId }).catch((err) => {
+      //       setTransactionState({
+      //         ...transactionState,
+      //         error: `Error getting wallet chainId: ${err}`
+      //       });
+      //     });
+      //   });
     } catch (error) {
-      alert(error.message);
+      console.log(error);
     }
   };
+
+  //   const chainChanged = async () => {
+  //     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  //     const rinkebyChainId = '0x4';
+  //     if (chainId !== rinkebyChainId) {
+  //       changeWalletChain();
+  //       // alert("You are not connected to the Rinkeby Test Network!");
+  //     } else return;
+  //   };
+
+  //   const changeWalletChain = async () => {
+  //     const provider = window.ethereum;
+  //     try {
+  //       await provider.request({
+  //         method: 'wallet_switchEthereumChain',
+  //         params: [{ chainId: '0x4' }]
+  //       });
+  //     } catch (error) {
+  //       alert(error.message);
+  //     }
+  //   };
 
   /* Listens for events emitted from the solidity contract, to render data accurately
     This should not rely on having a web wallet connection. 
@@ -376,6 +424,43 @@ const Home = () => {
     // askContractToMintNft(nftMetadata.url);
   };
 
+  //   const {
+  //     saveToNFTStorage,
+  //     data: nftMetadata,
+  //     error: nftStorageError,
+  //     isLoading: isSavingToNftStorage
+  //   } = useNFTStorage();
+
+  //   useEffect(() => {
+  //     if (isSavingToNftStorage) {
+  //       setTransactionState({
+  //         ...INITIAL_TRANSACTION_STATE,
+  //         loading: 'Saving NFT data to NFT.Storage...'
+  //       });
+  //     } else if (nftStorageError) {
+  //       setTransactionState({
+  //         ...INITIAL_TRANSACTION_STATE,
+  //         error: `Could not save NFT to NFT.Storage - Aborted minting: \n ${nftStorageError.message}`
+  //       });
+  //     } else if (nftMetadata) {
+  //       console.log('nftMetadata', nftMetadata);
+  //       createImageView(nftMetadata);
+  //       askContractToMintNft(nftMetadata.url);
+  //       setTransactionState({
+  //         ...INITIAL_TRANSACTION_STATE,
+  //         success: (
+  //           <>
+  //             <div>
+  //               Saved NFT data to NFT.Storage...!! We created an IPFS CID & made Filecoin Storage
+  //               Deals with one call!
+  //             </div>
+  //             File: <a>{nftMetadata.url}</a>
+  //           </>
+  //         )
+  //       });
+  //     }
+  //   }, [nftMetadata, nftStorageError, isSavingToNftStorage]);
+
   /* Helper function for createNFTData */
   const createImageView = (metadata) => {
     console.log('creating image view', metadata);
@@ -460,7 +545,7 @@ const Home = () => {
   /* Render our page */
   return (
     // <ErrorBoundary FallbackComponent={ErrorPage}>
-    <Layout connected={userWallet.accounts.length > 0} connectWallet={connectWallet}>
+    <Layout connected={userWallet.accounts === ''} connectWallet={connectWallet}>
       <>
         <p className="sub-sub-text">{`Remaining NFT's: ${remainingNFTs}`}</p>
         {transactionState !== INITIAL_TRANSACTION_STATE && (
@@ -471,9 +556,9 @@ const Home = () => {
         )}
         {imageView && <ImagePreview imgLink={imageView} preview="true" />}
         {linksObj.etherscan && <DisplayLinks linksObj={linksObj} />}
-        {userWallet.accounts.length < 1 ? (
-          <ConnectWalletButton connectWallet={connectWallet} connected={false} />
-        ) : loading ? (
+        {!userWallet.accounts ? (
+          <ConnectWalletButton connectWallet={connectWallet} connected />
+        ) : transactionState.loading ? (
           <div />
         ) : (
           <MintNFTInput

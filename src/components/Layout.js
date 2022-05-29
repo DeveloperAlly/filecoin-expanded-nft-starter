@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import ConnectWalletButton from './ConnectWalletButton';
 import { mainDetails } from '../utils/names';
 const { href, imageAlt, logo } = mainDetails;
 import PropTypes from 'prop-types';
@@ -14,13 +15,7 @@ const Layout = ({ connectWallet, connected, ...props }) => {
           <a href={href} target="_blank" rel="noreferrer">
             <img alt={imageAlt} style={{ height: '50px' }} src={logo} />
           </a>
-          <button
-            onClick={connectWallet}
-            className={
-              connected ? 'cta-button connect-to-wallet-button' : 'cta-button connect-wallet-button'
-            }>
-            {connected ? 'Connect to Wallet' : 'Connected'}
-          </button>
+          <ConnectWalletButton connected={connected} connectWallet={connectWallet} />
         </div>
         <div className="header-container">
           <Header />

@@ -1,13 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { MoralisProvider } from 'react-moralis';
 import './styles/index.css';
 import App from './App';
 import Home from './Home';
+import { createRoot } from 'react-dom/client';
 
-// const ProviderContext = createContext('provider');
-
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <React.StrictMode>
     {/* <ProviderContext> */}
     <MoralisProvider
@@ -16,6 +16,5 @@ ReactDOM.render(
       <Home />
     </MoralisProvider>
     {/* </ProviderContext> */}
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );

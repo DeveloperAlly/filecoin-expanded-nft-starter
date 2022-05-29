@@ -10,7 +10,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:prettier/recommended',
     'plugin:import/errors',
-    'plugin:import/warnings'
+    'plugin:import/warnings',
+    'plugin:react-hooks/recommended'
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -33,3 +34,18 @@ module.exports = {
     'no-unused-vars': ['warn', { vars: 'all', args: 'after-used', ignoreRestSiblings: false }]
   }
 };
+
+// package
+// "eslint-config-airbnb": "^19.0.4",
+// "eslint-config-prettier": "^8.5.0",
+// "eslint-plugin-import": "^2.26.0",
+// "eslint-plugin-jsx-a11y": "^6.5.1",
+// "eslint-plugin-prettier": "^4.0.0",
+// "eslint-plugin-react": "^7.30.0",
+// "eslint-plugin-react-hooks": "^4.5.0",
+
+// "eslint-config-prettier": "^8.5.0",
+// "eslint-plugin-jsx-a11y": "^6.5.1",
+// "eslint-plugin-prettier": "^4.0.0",
+// "eslint-plugin-react": "^7.30.0",
+// "eslint-plugin-react-hooks": "^4.5.0",
