@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable import/namespace */
+/* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 
 /* ERC71 based Solidity Contract Interface */
@@ -152,8 +155,7 @@ const Home = () => {
     }
   };
 
-  /* Listens for events emitted from the solidity contract, to render data accurately
-    This should not rely on having a web wallet connection. */
+  /* Listens for events emitted from the solidity contract, to render data accurately */
   const setContractEventListener = () => {
     console.log('Setting contract event listener...');
     try {
@@ -263,9 +265,7 @@ const Home = () => {
     saveToNFTStorage(nftJSON);
   };
 
-  //TODO: move out of hard coding - should be passed params
   //client.store is the saveMethod.
-  // we'd need to do some type checking of params for a useful hook
   const saveToNFTStorage = async (params) => {
     console.log('Saving NFT metadata to NFT.storage', params);
     setTransactionState({
