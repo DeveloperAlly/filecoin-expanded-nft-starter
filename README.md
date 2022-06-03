@@ -1,4 +1,36 @@
-## Making from scratch
+## Overview
+
+This project mints an NFT using solidity, NFT.Storage (which provides an immutable IPFS CID and then persistently stores to Filecoin) and React.
+There are 2 contracts which perform the same function of minting an NFT - an ERC721 and an ERC1155 contract.
+You can deploy these contracts to _any_ EVM-compatible chain including Polygon, AVAX, BSC or of course Ethereum
+
+## Archtitecture Overview & Diagram
+
+Client: React
+JS-client for web3: Ethers
+Backend: Solidity with OpenZeppelin Clients
+Blockchain Dev Environment: Hardhat
+Node Provider: Moralis
+
+## Dependencies
+
+- Metamask Wallet (NB: ALWAYS use a NEW Wallet for testing - NEVER use wallets with real assets in them)
+- Node
+
+## QuickStart
+
+- clone the repo
+- change directory to the repo
+- run `npm install`
+- create a .env file `touch .env` (.env.example has needed variables)
+- Get moralis endpoints (sign up for an account and use speedy nodes) - add the network you wish to deploy on to .env file (you can add multiple networks)
+- Get an NFT.Storage API - add this to .env file
+- Add your metamask (or wallet) private key to .env file
+- Build the contracts on the network of your choosing `npx hardhat run --network NETWORK scripts/deploy.js` (you may need to install hardhat globally if this doesn't work `npm i -g hardhat`)
+- Add the built contract addresses from the terminal log to the .env file
+- Run the client `npm start` (yeah yeah I haven't moved to yarn - old habits and all that)
+
+## Making this project from scratch
 
 ** Dependencies **
 

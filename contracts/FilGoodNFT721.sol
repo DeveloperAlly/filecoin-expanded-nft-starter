@@ -31,14 +31,14 @@ contract FilGoodNFT721 is ERC721URIStorage {
     }
     */
     event NewFilGoodNFTMinted(
-        address sender,
-        uint256 tokenId,
+        address indexed sender,
+        uint256 indexed tokenId,
         string tokenURI,
         uint256 remainingMintableNFTs
     );
 
     //This sets our collection details. Anything minted by this contract will fall under this header
-    constructor() ERC721("EthGlobal NFTHack2022", "Filecoin Starter NFTs") {
+    constructor() ERC721("FilGood NFTs 2022", "Filecoin Starter NFTs") {
         console.log("This is my ERC721 NFT contract");
         maxNFTs = 100; //set a limit to number of nft's that are mintable
         remainingMintableNFTs = 100;

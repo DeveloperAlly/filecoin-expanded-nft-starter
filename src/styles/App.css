@@ -32,6 +32,7 @@
   font-size: 20px;
   color: white;
   padding: 0;
+  padding-bottom: 20px;
   margin: 0;
 }
 
@@ -73,6 +74,20 @@
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: darkgrey;
+}
+
+.chain-button {
+  padding: '10px 0';
+  background: -webkit-linear-gradient(left, #2165ca, #2a16dd);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+}
+
+.chain-button-inactive {
+  padding: '10px 0';
+  background: -webkit-linear-gradient(left, #ffffff, #838385);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
 }
 
 .mint-button {

@@ -1,14 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./styles/index.css";
-import App from "./App";
+import React from 'react';
+import { MoralisProvider } from 'react-moralis';
+import './styles/index.css';
+import App from './archived/App';
+import Home from './Home';
+import { createRoot } from 'react-dom/client';
 
-
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
   <React.StrictMode>
-    {/* <MoralisProvider serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL} appId={process.env.REACT_APP_MORALIS_APP_ID}> */}
-    <App />
-    {/* </MoralisProvider> */}
-  </React.StrictMode>,
-  document.getElementById("root")
+    {/* <ProviderContext> */}
+    <MoralisProvider
+      serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL}
+      appId={process.env.REACT_APP_MORALIS_APP_ID}>
+      <Home />
+    </MoralisProvider>
+    {/* </ProviderContext> */}
+  </React.StrictMode>
 );
