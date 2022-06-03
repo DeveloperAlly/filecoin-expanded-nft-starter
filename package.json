@@ -19,8 +19,7 @@
     "react-scripts": "5.0.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.1.2",
-    "web-vitals": "^2.1.4",
-    "web3modal": "^1.9.7"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

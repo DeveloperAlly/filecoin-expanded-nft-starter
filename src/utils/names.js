@@ -1,9 +1,9 @@
 import { companyLogo, twitterLogo } from '../assets';
 
 export const headerDetails = {
-  name: 'Buildspace Women NFTs',
-  title: '100 personalised NFTs for Filecoin @ Buildspace Women 2022',
-  imageAlt: 'Buildspace Women NFT Logo',
+  name: 'The Graph FilGood NFTs',
+  title: '100 personalised NFTs for Filecoin @ The Graph 2022',
+  imageAlt: 'The Graph NFT Logo',
   href: 'https://hackathons.filecoin.io/',
   logo: companyLogo
 };

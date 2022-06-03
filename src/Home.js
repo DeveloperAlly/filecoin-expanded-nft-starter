@@ -1,13 +1,11 @@
-/* eslint-disable import/namespace */
-/* eslint-disable no-nested-ternary */
-import React, { useState, useEffect, ErrorBoundary } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /* ERC71 based Solidity Contract Interface */
 import { FilGoodNFT721JSON, FilGoodNFT1155JSON } from './utils/contracts';
 
 /* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
 import { NFTStorage, File } from 'nft.storage';
-import { baseSVG } from './utils/BaseSVG';
+import { baseSVG, endSVG } from './utils/BaseSVG';
 
 /* Encryption package to ensure SVG data is not changed in the front-end before minting */
 import CryptoJS from 'crypto-js';
@@ -39,12 +37,10 @@ import {
 import {
   setWalletListeners,
   checkForWalletConnection,
-  checkWalletChain,
   changeWalletChain
 } from './utils/helper_functions/wallet_functions';
 
 import {
-  createIPFSgatewayLink,
   createImageURLsForRetrieval,
   createImageView
 } from './utils/helper_functions/imageFunctions';
@@ -52,7 +48,6 @@ import {
 import {
   INITIAL_LINK_STATE,
   INITIAL_TRANSACTION_STATE,
-  ipfsHttpGatewayLink,
   NFT_METADATA_ATTRIBUTES,
   CHAIN_MAPPINGS
 } from './utils/consts';
@@ -72,7 +67,7 @@ const Home = () => {
   const [transactionState, setTransactionState] = useState(INITIAL_TRANSACTION_STATE);
   const [chainChoice, setChainChoice] = useState('rinkeby');
   const [contractOptions, setContractOptions] = useState(CHAIN_MAPPINGS.rinkeby); //inludes chain choice and contract choice
-  const [contractChoice, setcontractChoice] = useState('erc1155');
+  const [contractChoice, setcontractChoice] = useState('erc1155'); //future feature
 
   /**
    * This hook will load data from our NFT contract without a wallet being connected
@@ -116,11 +111,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log('nft data updated', nftCollectionData);
+    console.log('Nft data updated', nftCollectionData);
   }, [nftCollectionData]);
 
   useEffect(() => {
-    console.log('reminainingNft data updated', remainingNftData);
+    console.log('ReminainingNft data updated', remainingNftData);
   }, [remainingNftData]);
 
   // Runs when 'isInitialized' changes
@@ -135,11 +130,7 @@ const Home = () => {
   }, [isInitialized]);
 
   useEffect(() => {
-    console.log(
-      'chain has been changed - refetch data on this chain',
-      chainChoice,
-      contractOptions
-    );
+    console.log('Minting on a new chain...');
     changeWalletChain(contractOptions.chainId);
     resetState();
     setContractEventListener();
@@ -188,7 +179,7 @@ const Home = () => {
           }${contractOptions.contractAddress[contractChoice].toLowerCase()}/${tokenId}`,
           rarible: `${
             contractOptions.nftMarketplaceLinks[1].urlBase
-          }${process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS_1155.toLowerCase()}:${tokenId}`
+          }${contractOptions.contractAddress[contractChoice].toLowerCase()}:${tokenId}`
         });
         if (isInitialized) {
           getDisplayData();
@@ -249,9 +240,11 @@ const Home = () => {
       ...INITIAL_TRANSACTION_STATE,
       loading: 'Creating NFT data to save to NFT.Storage...'
     });
-
+    //NB: we could generate a random set of traits using
+    //a random number generator like Drand
+    // We could also use chainlink VRF in our contract
     const imageData = CryptoJS.AES.encrypt(
-      `${baseSVG}${name}</tspan></text></g></svg>`,
+      `${baseSVG}${name}${endSVG}`,
       process.env.REACT_APP_ENCRYPT_KEY
     );
     const nftJSON = {
@@ -261,7 +254,9 @@ const Home = () => {
       nftDataType: NFT_METADATA_ATTRIBUTES.fileType,
       nftDataName: NFT_METADATA_ATTRIBUTES.fileName,
       traits: {
-        awesomeness: '100'
+        awesomeness: '100',
+        builder: 'blockend',
+        filGoodVibes: '100'
       }
     };
 
@@ -361,17 +356,10 @@ const Home = () => {
           await data
             .wait()
             .then((tx) => {
-              console.log('nft minted tx', tx, data); //data.type
-              console.log('contractOptions', contractOptions);
+              console.log('Nft minted tx', tx);
               setLinksObj({
                 ...linksObj,
-                etherscan: `${contractOptions.blockExplorer.url}${tx.transactionHash}`,
-                opensea: `${
-                  contractOptions.nftMarketplaceLinks[0].urlBase
-                }${contractOptions.contractAddress[contractChoice].toLowerCase()}/0`,
-                rarible: `${
-                  contractOptions.nftMarketplaceLinks[1].url
-                }${process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS_1155.toLowerCase()}/items`
+                etherscan: `${contractOptions.blockExplorer.url}${tx.transactionHash}`
               });
               setTransactionState({
                 ...INITIAL_TRANSACTION_STATE,
