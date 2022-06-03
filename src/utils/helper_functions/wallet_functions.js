@@ -53,7 +53,6 @@ export const setWalletListeners = (userWallet, setUserWallet) => {
     // Subscribe to chainId change
     ethereum.on('chainChanged', (chainId) => {
       console.log('wallet: chainId', chainId);
-      console.log('userWallet', userWallet);
       setUserWallet({ ...userWallet, chainId });
     });
   }

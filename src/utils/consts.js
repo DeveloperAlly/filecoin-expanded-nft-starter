@@ -33,7 +33,12 @@ export const CHAIN_MAPPINGS = {
     blockExplorer: { name: 'Etherscan', url: 'https://rinkeby.etherscan.io/tx/' }, //{/tx/txHash}
     nftMarketplaceLinks: [
       { name: 'Opensea', urlBase: 'https://testnets.opensea.io/assets/', tokenIdConnector: '/' }, // {contractAddress/tokenNumber}
-      { name: 'Rarible', urlBase: 'https://rinkeby.rarible.com/token/', tokenIdConnector: ':' } //{contractAddress:tokenNumber}
+      {
+        name: 'Rarible',
+        urlBase: 'https://rinkeby.rarible.com/token/',
+        tokenIdConnector: ':',
+        url: 'https://rinkeby.rarible.com/token/'
+      } //{contractAddress:tokenNumber}
     ]
   },
   // goerli: {
