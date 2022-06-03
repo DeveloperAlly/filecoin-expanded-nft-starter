@@ -28,7 +28,6 @@ export const createImageURLsForRetrieval = async (limit, collection) => {
   const imgURLs = await Promise.all(
     dataCollection.map(async (el) => {
       const ipfsGatewayLink = createIPFSgatewayLink(el);
-      console.log('fetchURL', ipfsGatewayLink);
       const response = await fetch(ipfsGatewayLink);
       const json = await response.json();
       return json;
@@ -37,5 +36,11 @@ export const createImageURLsForRetrieval = async (limit, collection) => {
 
   console.log('imgURLs2', imgURLs);
   return imgURLs;
-  //   setRecentlyMinted(imgURLs);
+};
+
+export const createImageView = (metadata) => {
+  //   console.log('creating image view', metadata);
+  const imgViewArray = metadata.data.image.pathname.split('/');
+  const imgViewString = `https://${imgViewArray[2]}${ipfsHttpGatewayLink}${imgViewArray[3]}`;
+  return imgViewString;
 };

@@ -22,6 +22,7 @@ contract FilGoodNFT1155 is ERC1155 {
     //to save on computation costs
     uint256 public maxNFTs;
     uint256 public remainingMintableNFTs;
+    string public name = "FilGood NFTs 2022";
 
     struct NFT {
         address owner;

@@ -37,12 +37,14 @@ const useWalletStatus = () => {
   useEffect(() => {}, accounts);
 
   const connectWallet = () => {};
+
   const changeChain = () => {
     // await window.ethereum.request({
     //   method: 'wallet_switchEthereumChain',
     //   params: [{ chainId: '0x61' }], // chainId must be in hexadecimal numbers
     // });
   };
+
   const getWalletDetails = async () => {
     await ethereum
       .request({

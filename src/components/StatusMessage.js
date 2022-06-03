@@ -5,7 +5,6 @@ import { Message, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 const StatusMessage = ({ status, ...props }) => {
-  console.log('loading status', status);
   const { loading, error, success, warning } = status;
   return (
     <div

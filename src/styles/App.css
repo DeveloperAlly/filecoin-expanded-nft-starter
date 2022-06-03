@@ -76,6 +76,20 @@
   color: darkgrey;
 }
 
+.chain-button {
+  padding: '10px 0';
+  background: -webkit-linear-gradient(left, #2165ca, #2a16dd);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+}
+
+.chain-button-inactive {
+  padding: '10px 0';
+  background: -webkit-linear-gradient(left, #ffffff, #838385);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+}
+
 .mint-button {
   background: -webkit-linear-gradient(left, #a200d6, #ff6fdf);
   background-size: 200% 200%;

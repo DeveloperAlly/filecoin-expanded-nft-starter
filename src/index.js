@@ -1,7 +1,7 @@
 import React from 'react';
 import { MoralisProvider } from 'react-moralis';
 import './styles/index.css';
-import App from './App';
+import App from './archived/App';
 import Home from './Home';
 import { createRoot } from 'react-dom/client';
 

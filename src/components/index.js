@@ -8,6 +8,7 @@ import Link from './Link';
 import MintNFTInput from './MintNFTInput';
 import NFTViewer from './NFTViewer';
 import StatusMessage from './StatusMessage';
+import ChooseChain from './ChooseChain';
 
 export {
   ConnectWalletButton,
@@ -19,5 +20,6 @@ export {
   Link,
   MintNFTInput,
   NFTViewer,
-  StatusMessage
+  StatusMessage,
+  ChooseChain
 };

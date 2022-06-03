@@ -67,3 +67,9 @@
 # Big Bad Buglist
 
 -
+
+# Priority Tasks (wed, thurs)
+
+- Check Multichain & enable view for this
+- multi-options (video, music, image, markdown file) checked & working
+- random background colour & attributes for NFTs made
