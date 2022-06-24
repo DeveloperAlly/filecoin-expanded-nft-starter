@@ -70,7 +70,7 @@ const Home = () => {
   const [transactionState, setTransactionState] = useState(INITIAL_TRANSACTION_STATE);
   const [chainChoice, setChainChoice] = useState('rinkeby');
   const [contractOptions, setContractOptions] = useState(CHAIN_MAPPINGS.rinkeby); //inludes chain choice and contract choice
-  const [contractChoice, setcontractChoice] = useState('erc721'); //future feature
+  const [contractChoice, setcontractChoice] = useState('erc1155'); //future feature
 
   /**
    * This hook will load data from our NFT contract without a wallet being connected
