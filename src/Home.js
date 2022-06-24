@@ -140,6 +140,10 @@ const Home = () => {
     getDisplayData();
   }, [contractOptions]);
 
+  useEffect(() => {
+    console.log('testing linksObj', linksObj);
+  }, [linksObj]);
+
   const connectWallet = async () => {
     console.log('Connecting to a wallet...');
     if (window.ethereum) {
@@ -255,7 +259,7 @@ const Home = () => {
       nftData: imageData,
       nftDataType: NFT_METADATA_ATTRIBUTES.fileType,
       nftDataName: NFT_METADATA_ATTRIBUTES.fileName,
-      traits: {
+      attributes: {
         awesomeness: '100',
         builder: 'blockend',
         filGoodVibes: '100'
@@ -290,7 +294,7 @@ const Home = () => {
             type: params.nftDataType
           }
         ),
-        ...params.traits
+        attributes: [params.attributes]
       })
       .then((nftMetadata) => {
         console.log('NFT metadata saved to NFT.Storage', nftMetadata);
@@ -352,13 +356,14 @@ const Home = () => {
       await connectedContract
         .mintMyNFT(IPFSurl)
         .then(async (data) => {
-          //   console.log('nftTxn data', data);
+          console.log('nftTxn data', data);
           await data
             .wait()
             .then((tx) => {
               console.log('Nft minted tx', tx);
+              let links = linksObj;
               setLinksObj({
-                ...linksObj,
+                ...links,
                 etherscan: `${contractOptions.blockExplorer.url}${tx.transactionHash}`
               });
               setTransactionState({
@@ -416,7 +421,7 @@ const Home = () => {
           <Link link={imageView} description="See IPFS image link" />
         )}
         {imageView && <ImagePreview imgLink={imageView} preview="true" />}
-        {linksObj.etherscan && <DisplayLinks linksObj={linksObj} />}
+        {linksObj && <DisplayLinks linksObj={linksObj} />}
         {userWallet.accounts.length < 1 ? (
           <ConnectWalletButton connectWallet={connectWallet} connected={false} />
         ) : loading ? (
