@@ -1,11 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable import/namespace */
+/* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 
 /* ERC71 based Solidity Contract Interface */
 import { FilGoodNFT721JSON, FilGoodNFT1155JSON } from './utils/contracts';
-
-/* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
-import { NFTStorage, File } from 'nft.storage';
-import { baseSVG, endSVG } from './utils/BaseSVG';
 
 /* Encryption package to ensure SVG data is not changed in the front-end before minting */
 import CryptoJS from 'crypto-js';
@@ -51,6 +50,10 @@ import {
   NFT_METADATA_ATTRIBUTES,
   CHAIN_MAPPINGS
 } from './utils/consts';
+
+/* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
+import { NFTStorage, File } from 'nft.storage';
+import { baseSVG, endSVG } from './utils/BaseSVG';
 
 const Home = () => {
   /**
@@ -152,8 +155,7 @@ const Home = () => {
     }
   };
 
-  /* Listens for events emitted from the solidity contract, to render data accurately
-    This should not rely on having a web wallet connection. */
+  /* Listens for events emitted from the solidity contract, to render data accurately */
   const setContractEventListener = () => {
     console.log('Setting contract event listener...');
     try {
@@ -253,7 +255,7 @@ const Home = () => {
       nftData: imageData,
       nftDataType: NFT_METADATA_ATTRIBUTES.fileType,
       nftDataName: NFT_METADATA_ATTRIBUTES.fileName,
-      traits: {
+      attributes: {
         awesomeness: '100',
         builder: 'blockend',
         filGoodVibes: '100'
@@ -263,9 +265,7 @@ const Home = () => {
     saveToNFTStorage(nftJSON);
   };
 
-  //TODO: move out of hard coding - should be passed params
   //client.store is the saveMethod.
-  // we'd need to do some type checking of params for a useful hook
   const saveToNFTStorage = async (params) => {
     console.log('Saving NFT metadata to NFT.storage', params);
     setTransactionState({
@@ -290,7 +290,7 @@ const Home = () => {
             type: params.nftDataType
           }
         ),
-        ...params.traits
+        attributes: [params.attributes]
       })
       .then((nftMetadata) => {
         console.log('NFT metadata saved to NFT.Storage', nftMetadata);
@@ -352,13 +352,20 @@ const Home = () => {
       await connectedContract
         .mintMyNFT(IPFSurl)
         .then(async (data) => {
-          //   console.log('nftTxn data', data);
+          console.log('nftTxn data', data);
           await data
             .wait()
             .then((tx) => {
               console.log('Nft minted tx', tx);
+              let tokenId = tx.events[1].args.tokenId.toString();
+              console.log('tokenId args', tokenId);
               setLinksObj({
-                ...linksObj,
+                opensea: `${
+                  contractOptions.nftMarketplaceLinks[0].urlBase
+                }${contractOptions.contractAddress[contractChoice].toLowerCase()}/${tokenId}`,
+                rarible: `${
+                  contractOptions.nftMarketplaceLinks[1].urlBase
+                }${contractOptions.contractAddress[contractChoice].toLowerCase()}:${tokenId}`,
                 etherscan: `${contractOptions.blockExplorer.url}${tx.transactionHash}`
               });
               setTransactionState({
@@ -416,7 +423,7 @@ const Home = () => {
           <Link link={imageView} description="See IPFS image link" />
         )}
         {imageView && <ImagePreview imgLink={imageView} preview="true" />}
-        {linksObj.etherscan && <DisplayLinks linksObj={linksObj} />}
+        {linksObj && <DisplayLinks linksObj={linksObj} />}
         {userWallet.accounts.length < 1 ? (
           <ConnectWalletButton connectWallet={connectWallet} connected={false} />
         ) : loading ? (
