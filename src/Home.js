@@ -70,7 +70,7 @@ const Home = () => {
   const [transactionState, setTransactionState] = useState(INITIAL_TRANSACTION_STATE);
   const [chainChoice, setChainChoice] = useState('rinkeby');
   const [contractOptions, setContractOptions] = useState(CHAIN_MAPPINGS.rinkeby); //inludes chain choice and contract choice
-  const [contractChoice, setcontractChoice] = useState('erc1155'); //future feature
+  const [contractChoice, setcontractChoice] = useState('erc721'); //future feature
 
   /**
    * This hook will load data from our NFT contract without a wallet being connected
@@ -139,10 +139,6 @@ const Home = () => {
     setContractEventListener();
     getDisplayData();
   }, [contractOptions]);
-
-  useEffect(() => {
-    console.log('testing linksObj', linksObj);
-  }, [linksObj]);
 
   const connectWallet = async () => {
     console.log('Connecting to a wallet...');
@@ -361,9 +357,15 @@ const Home = () => {
             .wait()
             .then((tx) => {
               console.log('Nft minted tx', tx);
-              let links = linksObj;
+              let tokenId = tx.events[1].args.tokenId.toString();
+              console.log('tokenId args', tokenId);
               setLinksObj({
-                ...links,
+                opensea: `${
+                  contractOptions.nftMarketplaceLinks[0].urlBase
+                }${contractOptions.contractAddress[contractChoice].toLowerCase()}/${tokenId}`,
+                rarible: `${
+                  contractOptions.nftMarketplaceLinks[1].urlBase
+                }${contractOptions.contractAddress[contractChoice].toLowerCase()}:${tokenId}`,
                 etherscan: `${contractOptions.blockExplorer.url}${tx.transactionHash}`
               });
               setTransactionState({
