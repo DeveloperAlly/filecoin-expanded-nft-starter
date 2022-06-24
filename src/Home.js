@@ -6,10 +6,6 @@ import React, { useState, useEffect } from 'react';
 /* ERC71 based Solidity Contract Interface */
 import { FilGoodNFT721JSON, FilGoodNFT1155JSON } from './utils/contracts';
 
-/* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
-import { NFTStorage, File } from 'nft.storage';
-import { baseSVG, endSVG } from './utils/BaseSVG';
-
 /* Encryption package to ensure SVG data is not changed in the front-end before minting */
 import CryptoJS from 'crypto-js';
 
@@ -54,6 +50,10 @@ import {
   NFT_METADATA_ATTRIBUTES,
   CHAIN_MAPPINGS
 } from './utils/consts';
+
+/* NFT.Storage import for creating an IPFS CID & storing with Filecoin */
+import { NFTStorage, File } from 'nft.storage';
+import { baseSVG, endSVG } from './utils/BaseSVG';
 
 const Home = () => {
   /**

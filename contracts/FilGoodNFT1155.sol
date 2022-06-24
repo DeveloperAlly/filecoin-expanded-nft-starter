@@ -69,7 +69,8 @@ contract FilGoodNFT1155 is ERC1155 {
         _tokenURIs[tokenId] = tokenURI;
     }
 
-    function mintMyNFT(string memory ipfsURI) public {
+    //bear in mind - as this has no access control ANYONE can mint ANY NFT image they like with it
+    function mintMyNFT(string memory ipfsURI) public returns (uint256) {
         require(_tokenIds.current() < maxNFTs);
         uint256 newItemId = _tokenIds.current();
 
@@ -111,6 +112,8 @@ contract FilGoodNFT1155 is ERC1155 {
             ipfsURI,
             remainingMintableNFTs
         );
+
+        return newItemId;
     }
 
     function getNFTCollection() public view returns (NFT[] memory) {

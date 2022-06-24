@@ -44,7 +44,8 @@ contract FilGoodNFT721 is ERC721URIStorage {
         remainingMintableNFTs = 100;
     }
 
-    function mintMyNFT(string memory ipfsURI) public {
+    //bear in mind - as this has no access control ANYONE can mint ANY NFT image they like with it
+    function mintMyNFT(string memory ipfsURI) public returns (uint256) {
         require(_tokenIds.current() < maxNFTs);
         uint256 newItemId = _tokenIds.current();
 
@@ -71,6 +72,8 @@ contract FilGoodNFT721 is ERC721URIStorage {
             ipfsURI,
             remainingMintableNFTs
         );
+
+        return newItemId;
     }
 
     /**
